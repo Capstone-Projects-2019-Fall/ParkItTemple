@@ -19,6 +19,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final double NE_LAT = 39.975498;
@@ -53,33 +56,36 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-            mMap = googleMap;
+        mMap = googleMap;
 
-            // Add a marker to Temple and move the camera
-            LatLng temple = new LatLng(TEMPLE_LAT, TEMPLE_LNG);
-            mMap.addMarker(new MarkerOptions().position(temple).title("Temple University"));
-            mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
-            mMap.setMinZoomPreference(MIN_ZOOM);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temple, mMap.getMinZoomLevel()));
+        // Add a marker to Temple and move the camera
+        LatLng temple = new LatLng(TEMPLE_LAT, TEMPLE_LNG);
+        mMap.addMarker(new MarkerOptions().position(temple).title("Temple University"));
+        mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
+        mMap.setMinZoomPreference(MIN_ZOOM);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temple, mMap.getMinZoomLevel()));
 
-            //Add onCameraMoveListener to adjust bounds if the user zooms in
-            mMap.setOnCameraMoveListener(() -> {
-                if (mMap.getCameraPosition().zoom > MIN_ZOOM){
-                    mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
-                }
+        //Add onCameraMoveListener to adjust bounds if the user zooms in
+        mMap.setOnCameraMoveListener(() -> {
+            if (mMap.getCameraPosition().zoom > MIN_ZOOM){
+                mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
+            }
+        });
 
-            //Add polylines
-            Polyline polylines = mMap.addPolyline(new PolylineOptions()
-                    .clickable(true)
-                    .add(
-                            new LatLng(39.980231, -75.157521),
-                            new LatLng(39.983189, -75.156869),
-                            new LatLng(39.982933, -75.154721),
-                            new LatLng(39.979940, -75.155371),
-                            new LatLng(39.980231, -75.157521))
-                    .color(Color.RED)
-                    .width(20));
-            });
+        //Add polylines
+        List<LatLng> testPolyPoints = new ArrayList<>();
+        testPolyPoints.add(new LatLng(39.980231, -75.157521));
+        testPolyPoints.add(new LatLng(39.983189, -75.156869));
+        testPolyPoints.add(new LatLng(39.982933, -75.154721));
+        testPolyPoints.add(new LatLng(39.979940, -75.155371));
+        testPolyPoints.add(new LatLng(39.980231, -75.157521));
+
+        Polyline polylines = mMap.addPolyline(new PolylineOptions()
+                .clickable(true)
+                .color(Color.RED)
+                .width(20));
+
+        polylines.setPoints(testPolyPoints);
     }
 
 
