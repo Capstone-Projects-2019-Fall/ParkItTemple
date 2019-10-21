@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Park It Temple</string>
+    <string name="street_name">Sesame St</string>
+    <string name="street_num">1234</string>
+    <string name="real_time">Real-Time</string>
+    <string name="date">Day</string>
+    <string name="prob_perc">50%</string>
+    <string name="probability">Probability</string>
+    <string name="paid_free">Paid/Free</string>
+    <string name="paid">PAID</string>
+    <string name="notes">Notes</string>
+    <string name="notes2">Notes:</string>
 </resources>
