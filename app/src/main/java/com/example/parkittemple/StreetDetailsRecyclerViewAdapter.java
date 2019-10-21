@@ -1,7 +1,5 @@
 package com.example.parkittemple;
 
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +8,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class SteetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<SteetDetailsRecyclerViewAdapter.MyViewHolder>{
+public class StreetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<StreetDetailsRecyclerViewAdapter.MyViewHolder>{
 
     private final String[] mDays;
     private final double[] mProbs;
-    Resources resources;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -33,7 +30,7 @@ public class SteetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<SteetD
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    SteetDetailsRecyclerViewAdapter(String[] day, double[] probability) {
+    StreetDetailsRecyclerViewAdapter(String[] day, double[] probability) {
         mDays = day;
         mProbs = probability;
     }
@@ -41,7 +38,7 @@ public class SteetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<SteetD
 
     @NonNull
     @Override
-    public SteetDetailsRecyclerViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public StreetDetailsRecyclerViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.street_info_listview, parent, false);
         MyViewHolder vh = new MyViewHolder(v);

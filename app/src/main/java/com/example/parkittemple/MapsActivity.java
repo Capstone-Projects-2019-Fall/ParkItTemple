@@ -78,6 +78,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        //TODO
         /******************Add polylines here
          * We have to run a loop to add each street as a separate polyline
          * Set tag as the Street Object (polyline tags can accept arbitrary objects)

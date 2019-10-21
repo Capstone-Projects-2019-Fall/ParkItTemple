@@ -10,4 +10,13 @@
     <string name="paid">PAID</string>
     <string name="notes">Notes</string>
     <string name="notes2">Notes:</string>
+    <string-array name="days">
+        <item>Mon</item>
+        <item>Tues</item>
+        <item>Weds</item>
+        <item>Thur</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
+    </string-array>
 </resources>
