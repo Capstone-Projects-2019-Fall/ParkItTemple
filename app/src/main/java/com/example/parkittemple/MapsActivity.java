@@ -3,27 +3,19 @@ package com.example.parkittemple;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnInfoWindowCloseListener {
 
@@ -88,12 +80,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //Run loop: for each street in list:  run code below
         Polyline polyline = mMap.addPolyline(new PolylineOptions()
                 .clickable(true)
-                .color(Color.RED)
                 .width(20)
                 .add(new LatLng(39.980231, -75.157521),
                         new LatLng(39.983189, -75.156869)));
         polyline.setTag(TEST_POLY_TAG);
-
+        polyline.setColor(setPolylineColor(TEST_POLY_TAG));
         mMap.setOnPolylineClickListener(polylineX -> {
                 //Add marker with info window
                 Marker testMarker = mMap.addMarker(new MarkerOptions()
@@ -108,6 +99,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
 
+    }
+
+    private int setPolylineColor(Object polyTag) {
+        /**
+         * polytag = Street object;
+         *
+         * double prob = polyTag.getProb();
+         *
+         * switch (prob)
+         *      75 - 100: Green
+         *      50 -74: Yellow
+         *      25 - 49: Orange
+         *      0 - 24: Red
+         *
+         * return color
+         */
+
+        return Color.GREEN;
     }
 
     LatLng midPoint(double lat1, double lng1 ,double lat2, double lng2){

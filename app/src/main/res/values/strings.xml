@@ -10,6 +10,7 @@
     <string name="paid">PAID</string>
     <string name="notes">Notes</string>
     <string name="notes2">Notes:</string>
+    <string name="hr_parking">HR PARKING</string>
     <string-array name="days">
         <item>Mon</item>
         <item>Tues</item>
