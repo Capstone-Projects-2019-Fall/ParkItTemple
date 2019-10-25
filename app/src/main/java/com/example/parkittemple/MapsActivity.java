@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -74,7 +75,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         /******************Add polylines here
          * We have to run a loop to add each street as a separate polyline
          * Set tag as the Street Object (polyline tags can accept arbitrary objects)
-         * Snippet = basic info about street
          */
         //Load streets into a list: List<Street> streets = new ArrayList<>();
         //Run loop: for each street in list:  run code below
@@ -85,22 +85,26 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         new LatLng(39.983189, -75.156869)));
         polyline.setTag(TEST_POLY_TAG);
         polyline.setColor(setPolylineColor(TEST_POLY_TAG));
+
+        //TODO Change "Object street" to an actual Street object
         mMap.setOnPolylineClickListener(polylineX -> {
+                Object street = polylineX.getTag();
                 //Add marker with info window
                 Marker testMarker = mMap.addMarker(new MarkerOptions()
                     .position(midPoint(polylineX.getPoints().get(0).latitude,
                             polylineX.getPoints().get(0).longitude,
                             polylineX.getPoints().get(1).latitude,
                             polylineX.getPoints().get(1).longitude))
-                    .title(TEST_POLY_TAG)
-                    .snippet(TEST_POLY_TAG));
-                testMarker.setTag(TEST_POLY_TAG);
+                    .title(street.toString())
+                    .snippet(street.toString()));
+                testMarker.setTag(street.toString());
                 testMarker.showInfoWindow();
         });
 
 
     }
 
+    //TODO Update parameter to be a Street object
     private int setPolylineColor(Object polyTag) {
         /**
          * polytag = Street object;

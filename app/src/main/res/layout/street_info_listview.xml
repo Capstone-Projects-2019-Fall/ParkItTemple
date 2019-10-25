@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="100dp">
 
@@ -12,7 +13,9 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:gravity="center"
+        android:rotation="-60"
         android:text="@string/date"
+        android:textColor="@android:color/black"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,8 +27,9 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:text="@string/prob_perc"
+        android:textColor="@android:color/black"
         android:textSize="26sp"
-        app:layout_constraintBottom_toBottomOf="@+id/paid_free_val"
+        app:layout_constraintBottom_toBottomOf="@+id/hours_spinner"
         app:layout_constraintEnd_toEndOf="@+id/probability"
         app:layout_constraintHorizontal_bias="0.473"
         app:layout_constraintStart_toStartOf="@+id/probability"
@@ -36,49 +40,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/probability"
-        app:layout_constraintStart_toEndOf="@+id/paid_free"
-        app:layout_constraintTop_toTopOf="@+id/paid_free" />
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/hour"
+        app:layout_constraintTop_toTopOf="@+id/hour" />
 
     <TextView
-        android:id="@+id/paid_free"
+        android:id="@+id/hour"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/paid_free"
         android:gravity="center"
-        app:layout_constraintStart_toEndOf="@+id/day"
+        android:text="@string/hour"
+        android:textColor="@android:color/black"
+        app:layout_constraintLeft_toLeftOf="@+id/hours_spinner"
+        app:layout_constraintRight_toRightOf="@+id/hours_spinner"
         app:layout_constraintTop_toTopOf="@+id/day" />
 
-    <TextView
-        android:id="@+id/paid_free_val"
+    <Spinner
+        android:id="@+id/hours_spinner"
+        style="@style/Widget.AppCompat.Spinner"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:text="@string/paid"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="@+id/day"
-        app:layout_constraintEnd_toEndOf="@+id/paid_free"
-        app:layout_constraintStart_toStartOf="@+id/paid_free"
-        app:layout_constraintTop_toBottomOf="@+id/paid_free" />
-
-    <TextView
-        android:id="@+id/notes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:text="@string/notes2"
-        app:layout_constraintStart_toEndOf="@+id/probability"
-        app:layout_constraintTop_toTopOf="@+id/probability" />
-
-    <TextView
-        android:id="@+id/notes_text"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:text="@string/notes"
-        android:gravity="center_vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/percent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/notes"
-        app:layout_constraintTop_toBottomOf="@+id/notes" />
+        app:layout_constraintEnd_toStartOf="@+id/percent"
+        app:layout_constraintStart_toEndOf="@+id/day"
+        app:layout_constraintTop_toBottomOf="@+id/hour" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

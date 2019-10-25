@@ -6,11 +6,12 @@
     <string name="date">Day</string>
     <string name="prob_perc">50%</string>
     <string name="probability">Probability</string>
-    <string name="paid_free">Paid/Free</string>
-    <string name="paid">PAID</string>
+    <string name="hour">Hour</string>
+    <string name="hour_val">00:00</string>
     <string name="notes">Notes</string>
     <string name="notes2">Notes:</string>
     <string name="hr_parking">HR PARKING</string>
+    <string name="sample_note">This is a sample note</string>
     <string-array name="days">
         <item>Mon</item>
         <item>Tues</item>
@@ -19,5 +20,32 @@
         <item>Fri</item>
         <item>Sat</item>
         <item>Sun</item>
+    </string-array>
+
+    <string-array name="hours">
+        <item>12 AM</item>
+        <item>1 AM</item>
+        <item>2 AM</item>
+        <item>3 AM</item>
+        <item>4 AM</item>
+        <item>5 AM</item>
+        <item>6 AM</item>
+        <item>7 AM</item>
+        <item>8 AM</item>
+        <item>9 AM</item>
+        <item>10 AM</item>
+        <item>11 AM</item>
+        <item>12 PM</item>
+        <item>1 PM</item>
+        <item>2 PM</item>
+        <item>3 PM</item>
+        <item>4 PM</item>
+        <item>5 PM</item>
+        <item>6 PM</item>
+        <item>7 PM</item>
+        <item>8 PM</item>
+        <item>9 PM</item>
+        <item>10 PM</item>
+        <item>11 PM</item>
     </string-array>
 </resources>

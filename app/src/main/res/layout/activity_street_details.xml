@@ -10,13 +10,11 @@
         android:id="@+id/street_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:gravity="center"
         android:text="@string/street_name"
+        android:textColor="@android:color/black"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.134"
+        app:layout_constraintEnd_toStartOf="@+id/reg_sign"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/street_number" />
 
@@ -27,19 +25,22 @@
         android:layout_marginTop="32dp"
         android:gravity="center"
         android:text="@string/street_num"
+        android:textColor="@android:color/black"
         app:layout_constraintEnd_toEndOf="@+id/street_name"
         app:layout_constraintStart_toStartOf="@+id/street_name"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recview_street_details"
-        android:layout_width="409dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/reg_sign" />
 
     <include
@@ -47,10 +48,35 @@
         layout="@layout/parking_reg_sign"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/notes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:text="@string/notes2"
+        android:textColor="@android:color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/street_name" />
+
+    <TextView
+        android:id="@+id/notes_val"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center_vertical"
+        android:text="@string/notes"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="@+id/reg_sign"
+        app:layout_constraintEnd_toStartOf="@+id/reg_sign"
+        app:layout_constraintStart_toStartOf="@+id/notes"
+        app:layout_constraintTop_toBottomOf="@+id/notes" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
