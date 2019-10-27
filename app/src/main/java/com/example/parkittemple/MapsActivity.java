@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -17,6 +18,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnInfoWindowCloseListener {
 
@@ -77,27 +80,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
          * Set tag as the Street Object (polyline tags can accept arbitrary objects)
          */
         //Load streets into a list: List<Street> streets = new ArrayList<>();
-        //Run loop: for each street in list:  run code below
-        Polyline polyline = mMap.addPolyline(new PolylineOptions()
-                .clickable(true)
-                .width(20)
-                .add(new LatLng(39.980231, -75.157521),
-                        new LatLng(39.983189, -75.156869)));
-        polyline.setTag(TEST_POLY_TAG);
-        polyline.setColor(setPolylineColor(TEST_POLY_TAG));
+        //Run loop: for each street in list: generate polyline
+        ArrayList<TestStreet> testStreets = new ArrayList<>();
+        testStreets.add(new TestStreet(new LatLng(39.980231, -75.157521), new LatLng(39.983189, -75.156869), "street 1"));
+        testStreets.add(new TestStreet(new LatLng(39.983189, -75.156869), new LatLng(39.982927, -75.154742), "street 2"));
+        testStreets.add(new TestStreet(new LatLng(39.982927, -75.154742), new LatLng(39.979948, -75.155371), "street 3"));
+        testStreets.add(new TestStreet(new LatLng(39.979948, -75.155371), new LatLng(39.980231, -75.157521), "street 4"));
+        for (int i=0; i < testStreets.size(); i++){
+            Polyline polyline = mMap.addPolyline(new PolylineOptions()
+                    .clickable(true)
+                    .width(20)
+                    .add(testStreets.get(i).getStart(),testStreets.get(i).getEnd()));
+            polyline.setTag(testStreets.get(i));
+            polyline.setColor(setPolylineColor(testStreets.get(i).getName()));
+        }
+
 
         //TODO Change "Object street" to an actual Street object
         mMap.setOnPolylineClickListener(polylineX -> {
-                Object street = polylineX.getTag();
+                TestStreet street = (TestStreet) polylineX.getTag();
                 //Add marker with info window
                 Marker testMarker = mMap.addMarker(new MarkerOptions()
                     .position(midPoint(polylineX.getPoints().get(0).latitude,
                             polylineX.getPoints().get(0).longitude,
                             polylineX.getPoints().get(1).latitude,
                             polylineX.getPoints().get(1).longitude))
-                    .title(street.toString())
+                    .title(street.getName())
                     .snippet(street.toString()));
-                testMarker.setTag(street.toString());
+                testMarker.setTag(street);
                 testMarker.showInfoWindow();
         });
 
@@ -144,23 +154,64 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        if (marker.getTag().equals(TEST_POLY_TAG)){
+
             //Launch details activity on top of map fragment
             Intent streetDetails = new Intent(MapsActivity.this, StreetDetailsActivity.class);
-            streetDetails.putExtra(TEST_POLY_TAG, marker.getTag().toString());
+            streetDetails.putExtra("street_name", marker.getTag().toString());
             startActivity(streetDetails);
-        } else {
 
-        }
     }
 
     @Override
     public void onInfoWindowClose(Marker marker) {
-        if (marker.getTag().equals(TEST_POLY_TAG)){
+
             //Remove marker from map
             marker.remove();
-        } else {
 
+    }
+
+    class TestStreet {
+
+
+        private LatLng start;
+        private LatLng end;
+        private String name;
+
+        TestStreet(LatLng start, LatLng end, String name) {
+            this.start = start;
+            this.end = end;
+            this.name = name;
+        }
+
+        public LatLng getStart() {
+            return start;
+        }
+
+        public void setStart(LatLng start) {
+            this.start = start;
+        }
+
+        public LatLng getEnd() {
+            return end;
+        }
+
+        public void setEnd(LatLng end) {
+            this.end = end;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return name;
         }
     }
+
 }

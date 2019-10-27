@@ -9,12 +9,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class StreetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<StreetDetailsRecyclerViewAdapter.MyViewHolder>{
 
     private final String[] mDays;
-    private final double[] mProbs;
+    private final String[] mProbs;
     private final String[] mHours;
 
     // Provide a reference to the views for each data item
@@ -37,7 +38,7 @@ public class StreetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<Stree
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    StreetDetailsRecyclerViewAdapter(String[] day, double[] probability, String[] hours) {
+    StreetDetailsRecyclerViewAdapter(String[] day, String[] probability, String[] hours) {
         mDays = day;
         mProbs = probability;
         mHours = hours;
@@ -58,7 +59,7 @@ public class StreetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<Stree
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.day.setText(mDays[position]);
-        holder.prob.setText(mProbs[position] + "%");
+        holder.prob.setText(mProbs[position]);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(holder.mView.getContext(),R.array.hours, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -69,7 +70,7 @@ public class StreetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<Stree
 
                 //TODO change prob based on hour here. Currently choosing prob at random
                 int random = (int) (Math.random() * 100) % mProbs.length;
-                holder.prob.setText(mProbs[random] + "%");
+                holder.prob.setText(mProbs[random]);
 
             }
 
@@ -80,7 +81,7 @@ public class StreetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<Stree
         });
 
         if (position % 2 == 0){
-            holder.mView.setBackgroundColor(holder.itemView.getResources().getColor(R.color.light_gray));
+            holder.mView.setBackgroundColor(ContextCompat.getColor(holder.mView.getContext(), R.color.light_gray));
         }
     }
 
