@@ -38,7 +38,7 @@ public class StreetDetailsActivity extends AppCompatActivity {
         notes = findViewById(R.id.notes_val);
         notes.setText(bundle.getString(MapsActivity.DESCRIPTION));
         free = findViewById(R.id.free);
-        if (bundle.getString(MapsActivity.DESCRIPTION).equals("No parking.")){
+        if (bundle.getString(MapsActivity.DESCRIPTION).equals("No parking.") || bundle.getString(MapsActivity.DESCRIPTION).equals("To-do.")){
             findViewById(R.id.reg_sign).setVisibility(View.INVISIBLE);
             findViewById(R.id.recview_street_details).setVisibility(View.INVISIBLE);
             free.setText("");
@@ -53,11 +53,6 @@ public class StreetDetailsActivity extends AppCompatActivity {
         if (bundle.getString(MapsActivity.DESCRIPTION).equals("No regulation.")){
             findViewById(R.id.reg_sign).setVisibility(View.INVISIBLE);
         }
-
-
-
-
-
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recview_street_details);
         recyclerView.setHasFixedSize(true);

@@ -3,12 +3,14 @@ package com.example.parkittemple;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
@@ -29,7 +31,7 @@ import com.google.firebase.firestore.GeoPoint;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnInfoWindowCloseListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnInfoWindowCloseListener {
 
     private static final double NE_LAT = 39.975498;
     private static final double NE_LNG = -75.166811;
@@ -39,7 +41,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final double TEMPLE_LNG = -75.155308;
     private static final float MIN_ZOOM = 14.8f;
     private static final LatLngBounds TEMPLE_LATLNGBOUND = new LatLngBounds(new LatLng(NE_LAT, NE_LNG), new LatLng(SW_LAT, SW_LNG));
-    private static final String TEST_POLY_TAG = "test";
     private static final String TAG = "MapsActivity";
     public static final String STREET_NAME = "street_name";
     public static final String DESCRIPTION = "description";
@@ -120,32 +121,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
              */
             //Load streets into a list: List<Street> streets = new ArrayList<>();
             //Run loop: for each street in list: generate polyline
-       /* ArrayList<TestStreet> testStreets = new ArrayList<>();
-
-        ArrayList<LatLng> geoPoints1 = new ArrayList<>();
-        geoPoints1.add(new LatLng(39.980231, -75.157521));
-        geoPoints1.add(new LatLng(39.981703,-75.157218));
-        geoPoints1.add(new LatLng(39.983189, -75.156869));
-        testStreets.add(new TestStreet(geoPoints1, "street 1"));
-
-        ArrayList<LatLng> geoPoints2 = new ArrayList<>();
-        geoPoints2.add(new LatLng(39.983189, -75.156869));
-        geoPoints2.add(new LatLng(39.982927, -75.154742));
-        testStreets.add(new TestStreet(geoPoints2, "street 2"));
-
-        ArrayList<LatLng> geoPoints3 = new ArrayList<>();
-        geoPoints3.add(new LatLng(39.982927, -75.154742));
-        geoPoints3.add(new LatLng(39.979948, -75.155371));
-        testStreets.add(new TestStreet(geoPoints3, "street 3"));
-
-        ArrayList<LatLng> geoPoints4 = new ArrayList<>();
-        geoPoints4.add(new LatLng(39.979948, -75.155371));
-        geoPoints4.add(new LatLng(39.980231, -75.157521));
-        testStreets.add(new TestStreet(geoPoints4, "street 4"));
-
-        */
-
-
             for (int i = 0; i < tm.getStreets().size(); i++) {
                 Polyline polyline = mMap.addPolyline(new PolylineOptions()
                         .clickable(true)
@@ -171,6 +146,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+
+    //Converts a list of firebase geopoints to a list of googlemaps latlng
     private List<LatLng> geoToLatLng(List<GeoPoint> geoPoints) {
         ArrayList<LatLng> list = new ArrayList<>();
         for (int i = 0; i < geoPoints.size(); i++ ){
@@ -250,6 +227,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             marker.remove();
 
     }
+
+
 
     class TestStreet {
 
