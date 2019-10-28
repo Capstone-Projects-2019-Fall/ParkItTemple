@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,6 +19,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnInfoWindowCloseListener {
 
@@ -82,17 +82,35 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //Load streets into a list: List<Street> streets = new ArrayList<>();
         //Run loop: for each street in list: generate polyline
         ArrayList<TestStreet> testStreets = new ArrayList<>();
-        testStreets.add(new TestStreet(new LatLng(39.980231, -75.157521), new LatLng(39.983189, -75.156869), "street 1"));
-        testStreets.add(new TestStreet(new LatLng(39.983189, -75.156869), new LatLng(39.982927, -75.154742), "street 2"));
-        testStreets.add(new TestStreet(new LatLng(39.982927, -75.154742), new LatLng(39.979948, -75.155371), "street 3"));
-        testStreets.add(new TestStreet(new LatLng(39.979948, -75.155371), new LatLng(39.980231, -75.157521), "street 4"));
+
+        ArrayList<LatLng> geoPoints1 = new ArrayList<>();
+        geoPoints1.add(new LatLng(39.980231, -75.157521));
+        geoPoints1.add(new LatLng(39.981703,-75.157218));
+        geoPoints1.add(new LatLng(39.983189, -75.156869));
+        testStreets.add(new TestStreet(geoPoints1, "street 1"));
+
+        ArrayList<LatLng> geoPoints2 = new ArrayList<>();
+        geoPoints2.add(new LatLng(39.983189, -75.156869));
+        geoPoints2.add(new LatLng(39.982927, -75.154742));
+        testStreets.add(new TestStreet(geoPoints2, "street 2"));
+
+        ArrayList<LatLng> geoPoints3 = new ArrayList<>();
+        geoPoints3.add(new LatLng(39.982927, -75.154742));
+        geoPoints3.add(new LatLng(39.979948, -75.155371));
+        testStreets.add(new TestStreet(geoPoints3, "street 3"));
+
+        ArrayList<LatLng> geoPoints4 = new ArrayList<>();
+        geoPoints4.add(new LatLng(39.979948, -75.155371));
+        geoPoints4.add(new LatLng(39.980231, -75.157521));
+        testStreets.add(new TestStreet(geoPoints4, "street 4"));
+
         for (int i=0; i < testStreets.size(); i++){
             Polyline polyline = mMap.addPolyline(new PolylineOptions()
                     .clickable(true)
-                    .width(20)
-                    .add(testStreets.get(i).getStart(),testStreets.get(i).getEnd()));
+                    .width(20));
+            polyline.setPoints(testStreets.get(i).geoPoints);
             polyline.setTag(testStreets.get(i));
-            polyline.setColor(setPolylineColor(testStreets.get(i).getName()));
+            polyline.setColor(setPolylineColor(testStreets.get(i)));
         }
 
 
@@ -101,10 +119,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 TestStreet street = (TestStreet) polylineX.getTag();
                 //Add marker with info window
                 Marker testMarker = mMap.addMarker(new MarkerOptions()
-                    .position(midPoint(polylineX.getPoints().get(0).latitude,
-                            polylineX.getPoints().get(0).longitude,
-                            polylineX.getPoints().get(1).latitude,
-                            polylineX.getPoints().get(1).longitude))
+                    .position(midPoint(polylineX.getPoints()))
                     .title(street.getName())
                     .snippet(street.toString()));
                 testMarker.setTag(street);
@@ -133,22 +148,34 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return Color.GREEN;
     }
 
-    LatLng midPoint(double lat1, double lng1 ,double lat2, double lng2){
+    LatLng midPoint(List<LatLng> geopoints){
 
-        double dLng = Math.toRadians(lng2 - lng1);
+        System.out.println(geopoints.size());
+        if (geopoints.size() < 3) {
 
-        //convert to radians
-        lat1 = Math.toRadians(lat1);
-        lat2 = Math.toRadians(lat2);
-        lng1 = Math.toRadians(lng1);
+            double lat1 = geopoints.get(0).latitude;
+            double lat2 = geopoints.get(1).latitude;
+            double lng1 = geopoints.get(0).longitude;
+            double lng2 = geopoints.get(1).longitude;
 
-        double Bx = Math.cos(lat2) * Math.cos(dLng);
-        double By = Math.cos(lat2) * Math.sin(dLng);
-        double lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By));
-        double lng3 = lng1 + Math.atan2(By, Math.cos(lat1) + Bx);
 
-        //return out in degrees
-        return new LatLng(Math.toDegrees(lat3), Math.toDegrees(lng3));
+            double dLng = Math.toRadians(lng2 - lng1);
+
+            //convert to radians
+            lat1 = Math.toRadians(lat1);
+            lat2 = Math.toRadians(lat2);
+            lng1 = Math.toRadians(lng1);
+
+            double Bx = Math.cos(lat2) * Math.cos(dLng);
+            double By = Math.cos(lat2) * Math.sin(dLng);
+            double lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By));
+            double lng3 = lng1 + Math.atan2(By, Math.cos(lat1) + Bx);
+
+            //return out in degrees
+            return new LatLng(Math.toDegrees(lat3), Math.toDegrees(lng3));
+        }
+
+        return geopoints.get((int) Math.ceil(geopoints.size()/2));
     }
 
 
@@ -172,31 +199,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     class TestStreet {
 
-
-        private LatLng start;
-        private LatLng end;
+        private List<LatLng> geoPoints;
         private String name;
 
-        TestStreet(LatLng start, LatLng end, String name) {
-            this.start = start;
-            this.end = end;
+        TestStreet(List<LatLng> geopoints, String name) {
+            this.geoPoints = geopoints;
             this.name = name;
         }
 
-        public LatLng getStart() {
-            return start;
-        }
 
-        public void setStart(LatLng start) {
-            this.start = start;
+        public void setGeoPoints(List<LatLng> geoPoints) {
+            this.geoPoints = geoPoints;
         }
-
-        public LatLng getEnd() {
-            return end;
-        }
-
-        public void setEnd(LatLng end) {
-            this.end = end;
+        public List<LatLng> getGeoPoints() {
+            return geoPoints;
         }
 
         public String getName() {
@@ -213,5 +229,4 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return name;
         }
     }
-
 }
