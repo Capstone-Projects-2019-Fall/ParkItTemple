@@ -19,7 +19,7 @@ public class StreetDetailsActivity extends AppCompatActivity {
     private  String[] mDays; //An array of days of the week. Can leave as is or load from db
     private  String[] mProbs; //An array of probabilities for parking on it's index's respective hour.
     private  String[] mHours;
-    private TextView notes, street_name, street_num;
+    private TextView notes, street_name, free;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +37,26 @@ public class StreetDetailsActivity extends AppCompatActivity {
         street_name.setText(bundle.getString(MapsActivity.STREET_NAME));
         notes = findViewById(R.id.notes_val);
         notes.setText(bundle.getString(MapsActivity.DESCRIPTION));
-
+        free = findViewById(R.id.free);
         if (bundle.getString(MapsActivity.DESCRIPTION).equals("No parking.")){
             findViewById(R.id.reg_sign).setVisibility(View.INVISIBLE);
+            findViewById(R.id.recview_street_details).setVisibility(View.INVISIBLE);
+            free.setText("");
+        } else {
+
+            if (bundle.getBoolean(MapsActivity.FREE)) {
+                free.setText(getResources().getString(R.string.free_park));
+            } else if (bundle.getBoolean(MapsActivity.FREE))
+                free.setText(getResources().getString(R.string.paid_park));
         }
+
+        if (bundle.getString(MapsActivity.DESCRIPTION).equals("No regulation.")){
+            findViewById(R.id.reg_sign).setVisibility(View.INVISIBLE);
+        }
+
+
+
+
 
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recview_street_details);

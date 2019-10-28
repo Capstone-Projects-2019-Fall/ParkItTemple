@@ -12,6 +12,9 @@
     <string name="notes2">Notes:</string>
     <string name="hr_parking">HR PARKING</string>
     <string name="sample_note">This is a sample note</string>
+    <string name="free">free</string>
+    <string name="free_park">Free parking</string>
+    <string name="paid_park">Paid parking</string>
     <string-array name="days">
         <item>Mon</item>
         <item>Tues</item>
