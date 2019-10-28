@@ -105,27 +105,29 @@ public class TempleMap{
 
         street.setStreetName((String)map.get("street_name"));
 
-        for (String x : map.keySet()) {
+        /*for (String x : map.keySet()) {
             Log.d(TAG, "Data map key: " + x + "\n");
-        }
+        }*/
 
         Map<String, Object> calculationMap = (Map)map.get("calculation");
 
         Calculation calculation = new Calculation();
-        calculation.setProbability((String)calculationMap.get("probability"));
-        calculation.setAvailableSpots((String)calculationMap.get("available_spots"));
+        if (calculationMap != null) {
+            calculation.setProbability((String) calculationMap.get("probability"));
+            calculation.setAvailableSpots((String) calculationMap.get("available_spots"));
+        }
         street.setCalculation(calculation);
 
-        for (String x : calculationMap.keySet()) {
+        /*for (String x : calculationMap.keySet()) {
             Log.d(TAG, "CALCULATION Data map key: " + x + "\n");
-        }
+        }*/
 
         List<GeoPoint> geoPoints = (List)map.get("geopoints");
         street.setGeoPoints(geoPoints);
 
-        for (GeoPoint g : geoPoints) {
+        /*for (GeoPoint g : geoPoints) {
             Log.d(TAG, "GEOPOINT Data map long: " + g.getLongitude() + ". lat: " + g.getLatitude() + ".\n");
-        }
+        }*/
 
         Map<String, Object> regulationMap = (Map)map.get("regulation");
 
@@ -138,13 +140,12 @@ public class TempleMap{
         regulation.setEnd((Timestamp)regulationMap.get("end"));
         street.setRegulation(regulation);
 
-        for (String x : regulationMap.keySet()) {
+        /*for (String x : regulationMap.keySet()) {
             Log.d(TAG, "REGULATION Data map key: " + x + "\n");
-        }
+        }*/
 
+        //logStreet(street);
         return street;
-       // streets.add(street);
-        //logStreets(streets);
     }
 
     public static void logStreets(List<Street> streets) {
