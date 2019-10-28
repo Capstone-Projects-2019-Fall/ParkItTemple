@@ -1,11 +1,14 @@
 package com.example.parkittemple;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.parkittemple.database.Street;
 
 public class StreetDetailsActivity extends AppCompatActivity {
 
@@ -21,6 +24,9 @@ public class StreetDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle bundle = getIntent().getExtras();
+
         setContentView(R.layout.activity_street_details);
         mDays = getResources().getStringArray(R.array.days);
         mHours = getResources().getStringArray(R.array.hours);
@@ -28,9 +34,14 @@ public class StreetDetailsActivity extends AppCompatActivity {
 
 
         street_name = findViewById(R.id.street_name);
-        street_name.setText(getIntent().getStringExtra("street_name"));
+        street_name.setText(bundle.getString(MapsActivity.STREET_NAME));
         notes = findViewById(R.id.notes_val);
-        notes.setText(getString(R.string.sample_note));
+        notes.setText(bundle.getString(MapsActivity.DESCRIPTION));
+
+        if (bundle.getString(MapsActivity.DESCRIPTION).equals("No parking.")){
+            findViewById(R.id.reg_sign).setVisibility(View.INVISIBLE);
+        }
+
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recview_street_details);
         recyclerView.setHasFixedSize(true);

@@ -2,6 +2,7 @@ package com.example.parkittemple;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.Cap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -39,6 +41,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final LatLngBounds TEMPLE_LATLNGBOUND = new LatLngBounds(new LatLng(NE_LAT, NE_LNG), new LatLng(SW_LAT, SW_LNG));
     private static final String TEST_POLY_TAG = "test";
     private static final String TAG = "MapsActivity";
+    public static final String STREET_NAME = "street_name";
+    public static final String DESCRIPTION = "description";
+    public static final String FREE = "free";
     private GoogleMap mMap;
     private TempleMap tm;
 
@@ -190,7 +195,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
          * return color
          */
 
-        return Color.GREEN;
+        return Color.BLACK;
     }
 
     LatLng midPoint(List<LatLng> geopoints){
@@ -226,10 +231,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onInfoWindowClick(Marker marker) {
 
-            //Launch details activity on top of map fragment
-            Intent streetDetails = new Intent(MapsActivity.this, StreetDetailsActivity.class);
-            streetDetails.putExtra("street_name", marker.getTag().toString());
-            startActivity(streetDetails);
+        Bundle bundle = new Bundle();
+        Street street =(Street) marker.getTag();
+        //Launch details activity on top of map fragment
+        Intent streetDetails = new Intent(MapsActivity.this, StreetDetailsActivity.class);
+        bundle.putString(STREET_NAME, street.getStreetName());
+        bundle.putString(DESCRIPTION, street.getRegulation().getDescription());
+        bundle.putBoolean(FREE, street.getRegulation().isFree());
+        streetDetails.putExtras(bundle);
+        startActivity(streetDetails);
 
     }
 
