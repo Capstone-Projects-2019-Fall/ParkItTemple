@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.parkittemple.database.TempleMap;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.FirebaseApp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +34,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final LatLngBounds TEMPLE_LATLNGBOUND = new LatLngBounds(new LatLng(NE_LAT, NE_LNG), new LatLng(SW_LAT, SW_LNG));
     private static final String TEST_POLY_TAG = "test";
     private GoogleMap mMap;
-
+    private TempleMap tm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        FirebaseApp.initializeApp(this);
+        tm = new TempleMap();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -60,6 +63,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
         mMap.setOnInfoWindowClickListener(this);
         mMap.setOnInfoWindowCloseListener(this);
+
+
 
         //Set map to Temple
         LatLng temple = new LatLng(TEMPLE_LAT, TEMPLE_LNG);
@@ -222,7 +227,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             this.name = name;
         }
 
-        @NonNull
         @Override
         public String toString() {
             return name;
