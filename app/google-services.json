@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "563092502605",
+    "firebase_url": "https://park-it-temple.firebaseio.com",
+    "project_id": "park-it-temple",
+    "storage_bucket": "park-it-temple.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563092502605:android:b334da7d2dc714531c0404",
+        "android_client_info": {
+          "package_name": "com.example.parkittemple"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "563092502605-fov1o0mtd4s0r6cgm3rbahcmaioneski.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDP0oCB8B4BQ8KNVXSDcsR_XxdL0yLgVNc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "563092502605-fov1o0mtd4s0r6cgm3rbahcmaioneski.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
