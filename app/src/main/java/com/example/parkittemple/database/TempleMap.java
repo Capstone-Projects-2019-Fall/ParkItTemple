@@ -5,7 +5,9 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
@@ -15,10 +17,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-public class TempleMap {
+public class TempleMap{
 
     private List<Street> streets;
 
@@ -37,9 +40,20 @@ public class TempleMap {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        Task<QuerySnapshot> task = db.collection("streets").get();
 
-        //DocumentReference docRef = db.collection("streets").document("DjLiJHWNKM8XGmdnAZkv");
+        try {
+            QuerySnapshot documents = Tasks.await(task);
 
+            for (QueryDocumentSnapshot document : documents){
+
+                Street street = convertToStreet(document);
+                //logStreets(street);
+                streets.add(street);
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            Log.d(TAG, "get failed with ", e);
+        }
 
         /*docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -59,7 +73,7 @@ public class TempleMap {
                     Log.d(TAG, "get failed with ", task.getException());
                 }
             }
-        }); */
+        });
 
         db.collection("streets")
                 .get()
@@ -79,6 +93,8 @@ public class TempleMap {
                         }
                     }
                 });
+
+         */
     }
 
     public Street convertToStreet(DocumentSnapshot documentSnapshot) {

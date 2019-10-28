@@ -3,9 +3,13 @@ package com.example.parkittemple;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,6 +22,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +38,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final float MIN_ZOOM = 14.8f;
     private static final LatLngBounds TEMPLE_LATLNGBOUND = new LatLngBounds(new LatLng(NE_LAT, NE_LNG), new LatLng(SW_LAT, SW_LNG));
     private static final String TEST_POLY_TAG = "test";
+    private static final String TAG = "MapsActivity";
     private GoogleMap mMap;
     private TempleMap tm;
 
@@ -40,15 +46,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
         FirebaseApp.initializeApp(this);
-        tm = new TempleMap();
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+
+
+        Handler handler = new Handler(new Handler.Callback(){
+            @Override
+            public boolean handleMessage(Message msg) {
+                if (msg.what == 1) {
+                    Log.d(TAG, "onCreate: TempleMap size = " + tm.getStreets().size());
+                    // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+                    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                            .findFragmentById(R.id.map);
+                    mapFragment.getMapAsync(MapsActivity.this);
+                }
+                return false;
+            }
+        });
+
+        Thread t = new Thread(){
+            @Override
+            public void run() {
+                tm = new TempleMap();
+
+                Message msg = Message.obtain();
+                msg.what = 1;
+                handler.sendMessage(msg);
+            }
+        };
+        t.start();
+
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
     /**
      * Manipulates the map once available.
@@ -60,33 +92,32 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setOnInfoWindowClickListener(this);
-        mMap.setOnInfoWindowCloseListener(this);
+            mMap = googleMap;
+            mMap.setOnInfoWindowClickListener(this);
+            mMap.setOnInfoWindowCloseListener(this);
 
 
+            //Set map to Temple
+            LatLng temple = new LatLng(TEMPLE_LAT, TEMPLE_LNG);
+            mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
+            mMap.setMinZoomPreference(MIN_ZOOM);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temple, mMap.getMinZoomLevel()));
 
-        //Set map to Temple
-        LatLng temple = new LatLng(TEMPLE_LAT, TEMPLE_LNG);
-        mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
-        mMap.setMinZoomPreference(MIN_ZOOM);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temple, mMap.getMinZoomLevel()));
+            //Add onCameraMoveListener to adjust bounds if the user zooms in
+            mMap.setOnCameraMoveListener(() -> {
+                if (mMap.getCameraPosition().zoom > MIN_ZOOM) {
+                    mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
+                }
+            });
 
-        //Add onCameraMoveListener to adjust bounds if the user zooms in
-        mMap.setOnCameraMoveListener(() -> {
-            if (mMap.getCameraPosition().zoom > MIN_ZOOM){
-                mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
-            }
-        });
-
-        //TODO
-        /******************Add polylines here
-         * We have to run a loop to add each street as a separate polyline
-         * Set tag as the Street Object (polyline tags can accept arbitrary objects)
-         */
-        //Load streets into a list: List<Street> streets = new ArrayList<>();
-        //Run loop: for each street in list: generate polyline
-        ArrayList<TestStreet> testStreets = new ArrayList<>();
+            //TODO
+            /******************Add polylines here
+             * We have to run a loop to add each street as a separate polyline
+             * Set tag as the Street Object (polyline tags can accept arbitrary objects)
+             */
+            //Load streets into a list: List<Street> streets = new ArrayList<>();
+            //Run loop: for each street in list: generate polyline
+       /* ArrayList<TestStreet> testStreets = new ArrayList<>();
 
         ArrayList<LatLng> geoPoints1 = new ArrayList<>();
         geoPoints1.add(new LatLng(39.980231, -75.157521));
@@ -109,29 +140,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         geoPoints4.add(new LatLng(39.980231, -75.157521));
         testStreets.add(new TestStreet(geoPoints4, "street 4"));
 
-        for (int i=0; i < testStreets.size(); i++){
-            Polyline polyline = mMap.addPolyline(new PolylineOptions()
-                    .clickable(true)
-                    .width(20));
-            polyline.setPoints(testStreets.get(i).geoPoints);
-            polyline.setTag(testStreets.get(i));
-            polyline.setColor(setPolylineColor(testStreets.get(i)));
-        }
+        */
 
 
-        //TODO Change "Object street" to an actual Street object
-        mMap.setOnPolylineClickListener(polylineX -> {
-                TestStreet street = (TestStreet) polylineX.getTag();
+            for (int i = 0; i < tm.getStreets().size(); i++) {
+                Polyline polyline = mMap.addPolyline(new PolylineOptions()
+                        .clickable(true)
+                        .width(20));
+                polyline.setPoints(geoToLatLng(tm.getStreets().get(i).getGeoPoints()));
+                polyline.setTag(tm.getStreets().get(i));
+                polyline.setColor(setPolylineColor(tm.getStreets().get(i)));
+            }
+
+
+            //TODO Change "Object street" to an actual Street object
+            mMap.setOnPolylineClickListener(polylineX -> {
+                Street street = (Street) polylineX.getTag();
                 //Add marker with info window
                 Marker testMarker = mMap.addMarker(new MarkerOptions()
-                    .position(midPoint(polylineX.getPoints()))
-                    .title(street.getName())
-                    .snippet(street.toString()));
+                        .position(midPoint(polylineX.getPoints()))
+                        .title(street.getStreetName())
+                        .snippet(street.toString()));
                 testMarker.setTag(street);
                 testMarker.showInfoWindow();
-        });
+            });
 
 
+
+    }
+
+    private List<LatLng> geoToLatLng(List<GeoPoint> geoPoints) {
+        ArrayList<LatLng> list = new ArrayList<>();
+        for (int i = 0; i < geoPoints.size(); i++ ){
+            list.add(new LatLng(geoPoints.get(i).getLatitude(), geoPoints.get(i).getLongitude()));
+        }
+        return null;
     }
 
     //TODO Update parameter to be a Street object
