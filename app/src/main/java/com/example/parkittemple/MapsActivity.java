@@ -150,7 +150,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     LatLng midPoint(List<LatLng> geopoints){
 
-        System.out.println(geopoints.size());
         if (geopoints.size() < 3) {
 
             double lat1 = geopoints.get(0).latitude;
