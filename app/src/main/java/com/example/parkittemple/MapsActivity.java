@@ -47,8 +47,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         FirebaseApp.initializeApp(this);
-
-
         Handler handler = new Handler(new Handler.Callback(){
             @Override
             public boolean handleMessage(Message msg) {
@@ -159,8 +157,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Add marker with info window
                 Marker testMarker = mMap.addMarker(new MarkerOptions()
                         .position(midPoint(polylineX.getPoints()))
-                        .title(street.getStreetName())
-                        .snippet(street.toString()));
+                        .title(street.getStreetName()));
                 testMarker.setTag(street);
                 testMarker.showInfoWindow();
             });
@@ -174,7 +171,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         for (int i = 0; i < geoPoints.size(); i++ ){
             list.add(new LatLng(geoPoints.get(i).getLatitude(), geoPoints.get(i).getLongitude()));
         }
-        return null;
+        return list;
     }
 
     //TODO Update parameter to be a Street object

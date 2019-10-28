@@ -29,7 +29,6 @@ public class StreetDetailsActivity extends AppCompatActivity {
 
         street_name = findViewById(R.id.street_name);
         street_name.setText(getIntent().getStringExtra("street_name"));
-        street_num = findViewById(R.id.street_number);
         notes = findViewById(R.id.notes_val);
         notes.setText(getString(R.string.sample_note));
 
