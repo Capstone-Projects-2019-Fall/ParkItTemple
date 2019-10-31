@@ -15,6 +15,8 @@
     <string name="free">free</string>
     <string name="free_park">Free parking</string>
     <string name="paid_park">Paid parking</string>
+    <string name="navigation_drawer_open">Nav open</string>
+    <string name="navigation_drawer_close">Nav close</string>
     <string-array name="days">
         <item>Mon</item>
         <item>Tues</item>

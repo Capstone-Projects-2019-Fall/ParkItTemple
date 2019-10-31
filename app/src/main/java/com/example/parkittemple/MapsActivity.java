@@ -7,8 +7,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
@@ -45,12 +47,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private TempleMap tm;
 
+    DrawerLayout drawer;
+    ActionBarDrawerToggle actionBarDrawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        FirebaseApp.initializeApp(this);
-        Handler handler = new Handler(new Handler.Callback(){
+        setContentView(R.layout.activlty_main);
+
+
+        Toolbar toolbar = findViewById(R.id.toolbar_main);
+
+        drawer = findViewById(R.id.drawer_layout);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(actionBarDrawerToggle);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+
+
+
+        /*FirebaseApp.initializeApp(this);
+        Handler handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
                 if (msg.what == 1) {
@@ -64,7 +82,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        Thread t = new Thread(){
+        Thread t = new Thread() {
             @Override
             public void run() {
                 tm = new TempleMap();
@@ -75,6 +93,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         };
         t.start();
+
+         */
 
     }
 
