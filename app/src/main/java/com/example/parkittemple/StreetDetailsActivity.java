@@ -32,23 +32,23 @@ public class StreetDetailsActivity extends AppCompatActivity {
 
 
         street_name = findViewById(R.id.street_name);
-        street_name.setText(bundle.getString(MapsActivity.STREET_NAME));
+        street_name.setText(bundle.getString(MapFragment.STREET_NAME));
         notes = findViewById(R.id.notes_val);
-        notes.setText(bundle.getString(MapsActivity.DESCRIPTION));
+        notes.setText(bundle.getString(MapFragment.DESCRIPTION));
         free = findViewById(R.id.free);
-        if (bundle.getString(MapsActivity.DESCRIPTION).equals("No parking.") || bundle.getString(MapsActivity.DESCRIPTION).equals("To-do.")){
+        if (bundle.getString(MapFragment.DESCRIPTION).equals("No parking.") || bundle.getString(MapFragment.DESCRIPTION).equals("To-do.")){
             findViewById(R.id.reg_sign).setVisibility(View.INVISIBLE);
             findViewById(R.id.recview_street_details).setVisibility(View.INVISIBLE);
             free.setText("");
         } else {
 
-            if (bundle.getBoolean(MapsActivity.FREE)) {
+            if (bundle.getBoolean(MapFragment.FREE)) {
                 free.setText(getResources().getString(R.string.free_park));
-            } else if (bundle.getBoolean(MapsActivity.FREE))
+            } else if (bundle.getBoolean(MapFragment.FREE))
                 free.setText(getResources().getString(R.string.paid_park));
         }
 
-        if (bundle.getString(MapsActivity.DESCRIPTION).equals("No regulation.")){
+        if (bundle.getString(MapFragment.DESCRIPTION).equals("No regulation.")){
             findViewById(R.id.reg_sign).setVisibility(View.INVISIBLE);
         }
 
