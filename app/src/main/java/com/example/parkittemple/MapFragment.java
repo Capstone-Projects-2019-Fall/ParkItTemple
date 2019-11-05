@@ -24,7 +24,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
@@ -48,6 +47,7 @@ public class MapFragment extends Fragment {
     static final String STREET_NAME = "street_name";
     static final String DESCRIPTION = "description";
     static final String FREE = "free";
+    private static final String TEMPLE_MAP = "temple_map";
     private GoogleMap mMap;
     private TempleMap tm;
     private Handler handler;
@@ -57,64 +57,81 @@ public class MapFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /*public static MapFragment newInstance(TempleMap templeMap) {
+        MapFragment fragment = new MapFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(TEMPLE_MAP, templeMap);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+     */
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         Thread t = new Thread() {
             @Override
             public void run() {
                 tm = new TempleMap();
-                Message msg = Message.obtain();
-                msg.what = 1;
-                handler.sendMessage(msg);
+                handler.sendEmptyMessage(1);
             }
         };
         t.start();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_map, container, false);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        assert mapFragment != null;
+        mapFragment.getMapAsync(googleMap -> {
+            mMap = googleMap;
+            //Set map to Temple
+            LatLng temple = new LatLng(TEMPLE_LAT, TEMPLE_LNG);
+            mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
+            mMap.setMinZoomPreference(MIN_ZOOM);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temple, mMap.getMinZoomLevel()));
 
-        FirebaseApp.initializeApp(root.getContext());
-        handler = new Handler(msg -> {
-            if (msg.what == 1) {
-                Log.d(TAG, "onCreate: TempleMap size = " + tm.getStreets().size());
-                // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-                SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                        .findFragmentById(R.id.map);
-                assert mapFragment != null;
-                mapFragment.getMapAsync(googleMap -> {
-                    mMap = googleMap;
-
-                    //Set map to Temple
-                    LatLng temple = new LatLng(TEMPLE_LAT, TEMPLE_LNG);
+            //Add onCameraMoveListener to adjust bounds if the user zooms in
+            mMap.setOnCameraMoveListener(() -> {
+                if (mMap.getCameraPosition().zoom > MIN_ZOOM) {
                     mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
-                    mMap.setMinZoomPreference(MIN_ZOOM);
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temple, mMap.getMinZoomLevel()));
+                }
+            });
+            mMap.setOnInfoWindowClickListener(marker -> {
+                Bundle bundle = new Bundle();
+                Street street =(Street) marker.getTag();
+                //Launch details activity on top of map fragment
+                Intent streetDetails = new Intent(getContext(), StreetDetailsActivity.class);
+                assert street != null;
+                bundle.putString(STREET_NAME, street.getStreetName());
+                bundle.putString(DESCRIPTION, street.getRegulation().getDescription());
+                bundle.putBoolean(FREE, street.getRegulation().isFree());
+                streetDetails.putExtras(bundle);
+                startActivity(streetDetails);
+            });
+            //Remove marker from map
+            mMap.setOnInfoWindowCloseListener(Marker::remove);
+            mMap.setOnPolylineClickListener(polylineX -> {
+                Street street = (Street) polylineX.getTag();
+                //Add marker with info window
+                assert street != null;
+                Marker testMarker = mMap.addMarker(new MarkerOptions()
+                        .position(midPoint(polylineX.getPoints()))
+                        .title(street.getStreetName()));
+                testMarker.setTag(street);
+                testMarker.showInfoWindow();
+            });
 
-                    //Add onCameraMoveListener to adjust bounds if the user zooms in
-                    mMap.setOnCameraMoveListener(() -> {
-                        if (mMap.getCameraPosition().zoom > MIN_ZOOM) {
-                            mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
-                        }
-                    });
-
-                    mMap.setOnInfoWindowClickListener(marker -> {
-                        Bundle bundle = new Bundle();
-                        Street street =(Street) marker.getTag();
-                        //Launch details activity on top of map fragment
-                        Intent streetDetails = new Intent(getContext(), StreetDetailsActivity.class);
-                        assert street != null;
-                        bundle.putString(STREET_NAME, street.getStreetName());
-                        bundle.putString(DESCRIPTION, street.getRegulation().getDescription());
-                        bundle.putBoolean(FREE, street.getRegulation().isFree());
-                        streetDetails.putExtras(bundle);
-                        startActivity(streetDetails);
-                    });
-                    //Remove marker from map
-                    mMap.setOnInfoWindowCloseListener(Marker::remove);
-
+            handler = new Handler(msg -> {
+                if (msg.what== 1) {
+                    Log.d(TAG, "onCreate: TempleMap size = " + tm.getStreets().size());
                     /* ***************Add polylines here
                     We have to run a loop to add each street as a separate polyline
                     Set tag as the Street Object (polyline tags can accept arbitrary objects)
@@ -128,25 +145,22 @@ public class MapFragment extends Fragment {
                         polyline.setTag(tm.getStreets().get(i));
                         polyline.setColor(setPolylineColor(tm.getStreets().get(i)));
                     }
+                    return true;
+                }
+                return false;
+            });
 
-                    mMap.setOnPolylineClickListener(polylineX -> {
-                        Street street = (Street) polylineX.getTag();
-                        //Add marker with info window
-                        assert street != null;
-                        Marker testMarker = mMap.addMarker(new MarkerOptions()
-                                .position(midPoint(polylineX.getPoints()))
-                                .title(street.getStreetName()));
-                        testMarker.setTag(street);
-                        testMarker.showInfoWindow();
-                    });
-                });
-            }
-            return false;
         });
+
 
         return root;
     }
 
+    @Override
+    public void onDestroy() {
+        mMap.clear();
+        super.onDestroy();
+    }
 
     //Converts a list of firebase geopoints to a list of googlemaps latlng
     private List<LatLng> geoToLatLng(List<GeoPoint> geoPoints) {

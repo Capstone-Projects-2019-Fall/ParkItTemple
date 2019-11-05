@@ -2,9 +2,10 @@ package com.example.parkittemple.database;
 
 import com.google.firebase.firestore.GeoPoint;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Street {
+public class Street implements Serializable {
 
     private String streetName;
     private List<GeoPoint> geoPoints;

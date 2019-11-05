@@ -1,5 +1,7 @@
 package com.example.parkittemple.database;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
@@ -11,6 +13,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-public class TempleMap{
+public class TempleMap implements Serializable {
 
     private List<Street> streets;
 

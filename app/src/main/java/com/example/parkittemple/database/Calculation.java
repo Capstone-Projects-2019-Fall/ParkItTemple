@@ -1,6 +1,8 @@
 package com.example.parkittemple.database;
 
-public class Calculation {
+import java.io.Serializable;
+
+public class Calculation implements Serializable {
 
     private String availableSpots;
     private String probability;
