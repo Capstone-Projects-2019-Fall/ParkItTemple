@@ -32,10 +32,8 @@ public class RealTimeStreetsFragment extends Fragment {
     // the fragment initialization parameters
     private static final String STREET_LIST = "param1";
 
-    private ArrayList<Street> streets;
     private TempleMap templeMap;
-    private Handler handler;
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
 
     private OnFragmentInteractionListener parentActivity;
 
@@ -60,7 +58,7 @@ public class RealTimeStreetsFragment extends Fragment {
         if (templeMap != null) {
             recyclerView = (RecyclerView) view.findViewById(R.id.recview_street_list);
             recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-            recyclerView.setAdapter(new StreetListRecyclerViewAdapter(templeMap));
+            recyclerView.setAdapter(new StreetListRecyclerViewAdapter(getRealTimeStreets()));
             Log.d(TAG, "onCreateView: street list view" + templeMap.getStreets().size());
         }
 
@@ -83,6 +81,16 @@ public class RealTimeStreetsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         parentActivity = null;
+    }
+
+    private ArrayList<Street> getRealTimeStreets() {
+
+        ArrayList<Street> streets = new ArrayList<>();
+        streets.add(templeMap.getStreets().get(0));
+        streets.add(templeMap.getStreets().get(1));
+        streets.add(templeMap.getStreets().get(2));
+
+        return streets;
     }
 
 

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -31,6 +32,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private static final String MAP_FRAGMENT = "map_fragment";
+    private static final String REAL_TIME_FRAG = "real_time";
+    private static final String STREET_LIST_FRAG = "street_list";
+    private static final String TAG = "Main Activity";
     DrawerLayout drawer;
     ActionBarDrawerToggle actionBarDrawerToggle;
     NavigationView navigationView;
@@ -68,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         getSupportFragmentManager().beginTransaction()
             .replace(R.id.main_frame, new MapFragment(), MAP_FRAGMENT)
-            .addToBackStack(MAP_FRAGMENT)
             .commit();
     }
 
@@ -77,8 +80,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if(getFragmentManager().getBackStackEntryCount() > 0) {
-                getFragmentManager().popBackStack();
+            Log.d(TAG, "onBackPressed: back stack = " + getSupportFragmentManager().getBackStackEntryCount());
+            if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportFragmentManager().popBackStack();
             } else {
                 super.onBackPressed();
             }
@@ -115,31 +119,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
         Fragment fragment = null;
+        String tag = "";
+        boolean backStackFlag = true;
 
         switch (menuItem.getItemId()) {
             case R.id.real_time:
-                fragment = new RealTimeStreetsFragment();
+                tag = REAL_TIME_FRAG;
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment != null){
+                    backStackFlag = false;
+                    break;
+                } else {
+                    fragment = new RealTimeStreetsFragment();
+                }
                 break;
             case R.id.street_list:
-                //fragment = new StreetListFragment();
+                tag = STREET_LIST_FRAG;
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment != null){
+                    backStackFlag = false;
+                    break;
+                } else {
+                    fragment = new StreetListFragment();
+                }
                 break;
             default:
                 break;
         }
 
-        if (fragment != null)
-        getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment).addToBackStack(null).commit();
+        if (fragment != null) {
+            Log.d(TAG, "onNavigationItemSelected: back stack flag = " + backStackFlag);
+            Log.d(TAG, "onNavigationItemSelected: back stack count = " + getSupportFragmentManager().getBackStackEntryCount());
+            if (!backStackFlag) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment, tag).commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment, tag).addToBackStack(tag).commit();
+            }
+        }
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-
-    private ArrayList<Street> getRealTimeStreets() {
-
-
-
-        return null;
-    }
 
     @Override
     public void onStreetSelectedFromRealTimeFragment(Street street) {

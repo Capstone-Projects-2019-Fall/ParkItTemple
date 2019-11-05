@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class StreetListRecyclerViewAdapter extends RecyclerView.Adapter<StreetListRecyclerViewAdapter.MyViewHolder>{
 
-    private final TempleMap mStreets;
+    private final ArrayList<Street> mStreets;
 
 
     // Provide a reference to the views for each data item
@@ -38,7 +38,7 @@ public class StreetListRecyclerViewAdapter extends RecyclerView.Adapter<StreetLi
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    StreetListRecyclerViewAdapter(TempleMap streets) {
+    StreetListRecyclerViewAdapter(ArrayList<Street> streets) {
         mStreets = streets;
     }
 
@@ -56,13 +56,13 @@ public class StreetListRecyclerViewAdapter extends RecyclerView.Adapter<StreetLi
     public void onBindViewHolder(@NonNull StreetListRecyclerViewAdapter.MyViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.street.setText(mStreets.getStreets().get(position).getStreetName());
+        holder.street.setText(mStreets.get(position).getStreetName());
 
     }
 
 
     @Override
     public int getItemCount() {
-        return mStreets.getStreets().size();
+        return mStreets.size();
     }
 }
