@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import javax.annotation.Nullable;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, RealTimeStreetsFragment.OnFragmentInteractionListener
-    , StreetListFragment.OnFragmentInteractionListener{
+    , StreetListFragment.OnFragmentInteractionListener, MapFragment.onMapInteraction{
 
 
     private static final String MAP_FRAGMENT = "map_fragment";
@@ -150,8 +150,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (fragment != null) {
             Log.d(TAG, "onNavigationItemSelected: back stack flag = " + backStackFlag);
             Log.d(TAG, "onNavigationItemSelected: back stack count = " + getSupportFragmentManager().getBackStackEntryCount());
+            Log.d(TAG, "onNavigationItemSelected: fragment = " + fragment.getTag());
             if (!backStackFlag) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment, tag).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment, tag).commitNow();
             } else {
                 getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment, tag).addToBackStack(tag).commit();
             }
@@ -169,5 +170,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onStreetSelectedFromStreetListFragment(Uri uri) {
 
+    }
+
+    @Override
+    public void onStreetClick(Street street) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_frame, StreetDetailsFragment.newInstance(street)).addToBackStack(null).commit();
     }
 }

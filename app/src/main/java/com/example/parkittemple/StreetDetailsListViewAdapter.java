@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class StreetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<StreetDetailsRecyclerViewAdapter.MyViewHolder>{
+public class StreetDetailsListViewAdapter extends RecyclerView.Adapter<StreetDetailsListViewAdapter.MyViewHolder>{
 
     private final String[] mDays;
     private final String[] mProbs;
@@ -38,7 +38,7 @@ public class StreetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<Stree
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    StreetDetailsRecyclerViewAdapter(String[] day, String[] probability, String[] hours) {
+    StreetDetailsListViewAdapter(String[] day, String[] probability, String[] hours) {
         mDays = day;
         mProbs = probability;
         mHours = hours;
@@ -47,11 +47,10 @@ public class StreetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<Stree
 
     @NonNull
     @Override
-    public StreetDetailsRecyclerViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public StreetDetailsListViewAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.street_info_listview, parent, false);
-        MyViewHolder vh = new MyViewHolder(v);
-        return vh;
+        return new MyViewHolder(v);
     }
 
     @Override
@@ -80,9 +79,9 @@ public class StreetDetailsRecyclerViewAdapter extends RecyclerView.Adapter<Stree
             }
         });
 
-        if (position % 2 == 0){
-            holder.mView.setBackgroundColor(ContextCompat.getColor(holder.mView.getContext(), R.color.light_gray));
-        }
+        //if (position % 2 == 0){
+        //    holder.mView.setBackgroundColor(ContextCompat.getColor(holder.mView.getContext(), R.color.light_gray));
+        //}
     }
 
 

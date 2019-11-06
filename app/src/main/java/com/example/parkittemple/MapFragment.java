@@ -1,6 +1,7 @@
 package com.example.parkittemple;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import java.util.List;
  */
 public class MapFragment extends Fragment {
 
+    private onMapInteraction parent;
     private static final double NE_LAT = 39.975498;
     private static final double NE_LNG = -75.166811;
     private static final double SW_LAT = 39.988104;
@@ -105,16 +107,7 @@ public class MapFragment extends Fragment {
                 }
             });
             mMap.setOnInfoWindowClickListener(marker -> {
-                Bundle bundle = new Bundle();
-                Street street =(Street) marker.getTag();
-                //Launch details activity on top of map fragment
-                Intent streetDetails = new Intent(getContext(), StreetDetailsActivity.class);
-                assert street != null;
-                bundle.putString(STREET_NAME, street.getStreetName());
-                bundle.putString(DESCRIPTION, street.getRegulation().getDescription());
-                bundle.putBoolean(FREE, street.getRegulation().isFree());
-                streetDetails.putExtras(bundle);
-                startActivity(streetDetails);
+                parent.onStreetClick((Street) marker.getTag());
             });
             //Remove marker from map
             mMap.setOnInfoWindowCloseListener(Marker::remove);
@@ -154,6 +147,17 @@ public class MapFragment extends Fragment {
 
 
         return root;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof onMapInteraction) {
+            parent = (onMapInteraction) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -217,6 +221,10 @@ public class MapFragment extends Fragment {
         }
 
         return geopoints.get((int) Math.ceil(geopoints.size()/2));
+    }
+
+    public interface onMapInteraction{
+        void onStreetClick(Street street);
     }
 
 }

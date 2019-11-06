@@ -25,9 +25,6 @@
 
         </activity>
 
-        <activity android:name=".StreetDetailsActivity"
-                    android:screenOrientation="portrait"/>
-
         <activity android:name=".MainActivity"
                     android:screenOrientation="portrait"/>
 
