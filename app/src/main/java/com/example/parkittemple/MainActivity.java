@@ -3,11 +3,8 @@ package com.example.parkittemple;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -21,9 +18,6 @@ import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.firestore.proto.TargetOuterClass;
-
-import java.util.ArrayList;
 
 import javax.annotation.Nullable;
 
