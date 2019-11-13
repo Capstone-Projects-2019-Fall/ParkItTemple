@@ -2,16 +2,12 @@ package com.example.parkittemple;
 
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,11 +24,14 @@ import com.example.parkittemple.database.TempleMap;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.firestore.GeoPoint;
@@ -55,6 +54,14 @@ public class MapFragment extends Fragment {
     private static final double SW_LNG = -75.146070;
     private static final double TEMPLE_LAT = 39.981415;
     private static final double TEMPLE_LNG = -75.155308;
+    private static final double TEMPLE_15_OXFORD_LAT = 39.977496;
+    private static final double TEMPLE_15_OXFORD_LNG = -75.159847;
+    private static final double TEMPLE_11_DIAMOND_LAT = 39.983987;
+    private static final double TEMPLE_11_DIAMOND_LNG = -75.151277;
+    private LatLng templeMapCenter = new LatLng(39.980548, -75.155258);
+    private GroundOverlayOptions templeMapOverlay;
+    private boolean cleared, showPolylines;
+    private float currZoom;
     private static final float MIN_ZOOM = 14.8f;
     private static final LatLngBounds TEMPLE_LATLNGBOUND = new LatLngBounds(new LatLng(NE_LAT, NE_LNG), new LatLng(SW_LAT, SW_LNG));
     private static final String TAG = "MainActivity";
@@ -129,33 +136,68 @@ public class MapFragment extends Fragment {
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
                 mMap.setOnMyLocationButtonClickListener(() -> {
-                    Toast.makeText(getContext(), "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Roger that! Coming to you Captain!", Toast.LENGTH_SHORT).show();
                     return false;
                 });
-                mMap.setOnMyLocationClickListener(new GoogleMap.OnMyLocationClickListener() {
+
+                /*mMap.setOnMyLocationClickListener(new GoogleMap.OnMyLocationClickListener() {
                     @Override
                     public void onMyLocationClick(@NonNull Location location) {
                         Toast.makeText(getContext(), "Current location:\n" + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_LONG).show();
 
                     }
                 });
+
+                 */
             }
 
 
-                //Set map to Temple
+            //Set map to Temple
             LatLng temple = new LatLng(TEMPLE_LAT, TEMPLE_LNG);
             mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
-            mMap.setMinZoomPreference(MIN_ZOOM);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temple, mMap.getMinZoomLevel()));
+            if (currZoom > 0f)
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temple, currZoom/*mMap.getMinZoomLevel()*/));
+            else
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temple, MIN_ZOOM/*mMap.getMinZoomLevel()*/));
+
+            //Create ground overlay
+            templeMapOverlay = new GroundOverlayOptions()
+                    .image(BitmapDescriptorFactory.fromResource(R.drawable.temple_logo))
+                    .bearing(10f)
+                    .position(templeMapCenter, 900f, 1024f);
 
             //Add onCameraMoveListener to adjust bounds if the user zooms in
             mMap.setOnCameraMoveListener(() -> {
+                currZoom = mMap.getCameraPosition().zoom;
+                //user is zoomed in
                 if (mMap.getCameraPosition().zoom > MIN_ZOOM) {
-                    mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
+                    if (!showPolylines){
+                        mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
+                        mMap.clear();
+                        handler.sendEmptyMessage(1);
+                        showPolylines = true;
+                        cleared = false;
+                    }
+                } else if (mMap.getCameraPosition().zoom < MIN_ZOOM){
+                    if (!cleared) {
+                        mMap.setLatLngBoundsForCameraTarget(null);
+                        try {
+                            mMap.clear();
+                        } catch (IllegalArgumentException e){
+                            Log.d(TAG, "onCreateView: " + e);
+                            mMap.clear();
+                        }
+                        mMap.addGroundOverlay(templeMapOverlay);
+                        cleared = true;
+                        showPolylines = false;
+                    }
                 }
             });
             mMap.setOnInfoWindowClickListener(marker -> {
-                parent.onStreetClick((Street) marker.getTag());
+                if (marker.getTag() instanceof Street)
+                    parent.onStreetClick((Street) marker.getTag());
+                else
+                    Toast.makeText(getContext(),"Lot clicked", Toast.LENGTH_SHORT).show();
             });
             //Remove marker from map
             mMap.setOnInfoWindowCloseListener(Marker::remove);
@@ -169,11 +211,32 @@ public class MapFragment extends Fragment {
                 testMarker.setTag(street);
                 testMarker.showInfoWindow();
             });
+            mMap.setOnPolygonClickListener(polygonX -> {
+                //TODO ParkingLot lot = (ParkingLot) polygonX.getTag();
+                //Add marker with info window
+                /*
+
+                assert lot != null;
+                Marker testMarker = mMap.addMarker(new MarkerOptions()
+                        .position(centerPoint(polygonX.getPoints()))
+                        .title(lot.getLotName()));
+                testMarker.setTag(lot);
+                testMarker.showInfoWindow();
+
+                 */
+                Marker testMarker = mMap.addMarker(new MarkerOptions()
+                        .position(centerPoint(polygonX.getPoints()))
+                        .title("Lot 7"));
+                testMarker.setTag("Lot 7");
+                testMarker.showInfoWindow();
+
+            });
 
             handler = new Handler(msg -> {
                 if (msg.what== 1) {
                     Log.d(TAG, "onCreate: TempleMap size = " + tm.getStreets().size());
-                    /* ***************Add polylines here
+                    //TODO add parking lot schema to db
+                    /* ***************Add polylines and polygons here
                     We have to run a loop to add each street as a separate polyline
                     Set tag as the Street Object (polyline tags can accept arbitrary objects)
                     Load streets into a list: List<Street> streets = new ArrayList<>();
@@ -186,6 +249,23 @@ public class MapFragment extends Fragment {
                         polyline.setTag(tm.getStreets().get(i));
                         polyline.setColor(setPolylineColor(tm.getStreets().get(i)));
                     }
+
+
+                    //TODO this is a test polygon
+                    // Instantiates a new Polygon object and adds points to define a rectangle
+                    // MAKE SURE TO ADD LATLNG IN THIS ORDER: top right -> top left -> bottom right -> bottom left
+                    PolygonOptions SERCParkingLot = new PolygonOptions()
+                            .add(new LatLng(39.982490, -75.151671),     //top right
+                                    new LatLng(39.982564, -75.152224),  //top left
+                                    new LatLng(39.981800, -75.152412),  //bottom left
+                                    new LatLng(39.981714, -75.151841))  //bottom right
+                            .fillColor(getResources().getColor(R.color.blue_semi_trans))
+                            .clickable(true)
+                            .strokeWidth(1f);
+
+                    // Get back the mutable Polygon
+                    Polygon polygon = mMap.addPolygon(SERCParkingLot);
+
                     return true;
                 }
                 return false;
@@ -269,6 +349,31 @@ public class MapFragment extends Fragment {
         }
 
         return geopoints.get((int) Math.ceil(geopoints.size()/2));
+    }
+
+    private LatLng centerPoint(List<LatLng> geopoints){
+
+        //Find midpoint of diagonal
+        double lat1 = geopoints.get(0).latitude;
+        double lat2 = geopoints.get(2).latitude;
+        double lng1 = geopoints.get(0).longitude;
+        double lng2 = geopoints.get(2).longitude;
+
+
+        double dLng = Math.toRadians(lng2 - lng1);
+
+        //convert to radians
+        lat1 = Math.toRadians(lat1);
+        lat2 = Math.toRadians(lat2);
+        lng1 = Math.toRadians(lng1);
+
+        double Bx = Math.cos(lat2) * Math.cos(dLng);
+        double By = Math.cos(lat2) * Math.sin(dLng);
+        double lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By));
+        double lng3 = lng1 + Math.atan2(By, Math.cos(lat1) + Bx);
+
+        //return out in degrees
+        return new LatLng(Math.toDegrees(lat3), Math.toDegrees(lng3));
     }
 
     public interface onMapInteraction{

@@ -75,6 +75,6 @@ public class StreetListFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
 
-        void onStreetSelectedFromStreetListFragment(Uri uri);
+        void onStreetSelectedFromStreetListFragment(Street street);
     }
 }

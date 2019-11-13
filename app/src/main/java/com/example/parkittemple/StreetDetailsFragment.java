@@ -110,6 +110,7 @@ public class StreetDetailsFragment extends Fragment {
         if (description.equals("No parking.") || description.equals("To-do.")){
             view.findViewById(R.id.reg_sign).setVisibility(View.INVISIBLE);
             view.findViewById(R.id.prob_view).setVisibility(View.INVISIBLE);
+            view.findViewById(R.id.alert_text_view).setVisibility(View.INVISIBLE);
             free.setText("");
         } else {
 
