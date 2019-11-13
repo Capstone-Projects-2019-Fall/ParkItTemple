@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -46,7 +47,7 @@ import java.util.Objects;
  */
 public class MapFragment extends Fragment {
 
-    private static final int MY_PERMISSIONS_LOCATION = 1;
+    static final int MY_PERMISSIONS_LOCATION = 1;
     private onMapInteraction parent;
     private static final double NE_LAT = 39.975498;
     private static final double NE_LNG = -75.166811;
@@ -54,7 +55,7 @@ public class MapFragment extends Fragment {
     private static final double SW_LNG = -75.146070;
     private static final double TEMPLE_LAT = 39.981415;
     private static final double TEMPLE_LNG = -75.155308;
-    private static final float MIN_ZOOM = 13.5f;
+    private static final float MIN_ZOOM = 14.8f;
     private static final LatLngBounds TEMPLE_LATLNGBOUND = new LatLngBounds(new LatLng(NE_LAT, NE_LNG), new LatLng(SW_LAT, SW_LNG));
     private static final String TAG = "MainActivity";
     static final String STREET_NAME = "street_name";
@@ -93,6 +94,16 @@ public class MapFragment extends Fragment {
         };
         t.start();
 
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Request the permission
+            ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_LOCATION);
+        }
+
 
 
     }
@@ -109,20 +120,29 @@ public class MapFragment extends Fragment {
         mapFragment.getMapAsync(googleMap -> {
             mMap = googleMap;
 
+
             if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
                     Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
+                    == PackageManager.PERMISSION_GRANTED) {
 
-                // Request the permission
-                ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_LOCATION);
-            } else {
+                //Get user location
                 mMap.setMyLocationEnabled(true);
+                mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                mMap.setOnMyLocationButtonClickListener(() -> {
+                    Toast.makeText(getContext(), "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+                    return false;
+                });
+                mMap.setOnMyLocationClickListener(new GoogleMap.OnMyLocationClickListener() {
+                    @Override
+                    public void onMyLocationClick(@NonNull Location location) {
+                        Toast.makeText(getContext(), "Current location:\n" + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_LONG).show();
 
+                    }
+                });
             }
 
-            //Set map to Temple
+
+                //Set map to Temple
             LatLng temple = new LatLng(TEMPLE_LAT, TEMPLE_LNG);
             mMap.setLatLngBoundsForCameraTarget(TEMPLE_LATLNGBOUND);
             mMap.setMinZoomPreference(MIN_ZOOM);
@@ -253,43 +273,7 @@ public class MapFragment extends Fragment {
 
     public interface onMapInteraction{
         void onStreetClick(Street street);
+        void onLocationEnabled();
     }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mMap.setMyLocationEnabled(true);
-                    Log.d(TAG, "onCreateView: myLocationEnable = " + mMap.isMyLocationEnabled());
-                    //Get user location
-                    mMap.getUiSettings().setMyLocationButtonEnabled(true);
-                    mMap.setOnMyLocationButtonClickListener(() -> {
-                        Toast.makeText(getContext(), "MyLocation button clicked", Toast.LENGTH_SHORT).show();
-                        return false;
-                    });
-                    mMap.setOnMyLocationClickListener(new GoogleMap.OnMyLocationClickListener() {
-                        @Override
-                        public void onMyLocationClick(@NonNull Location location) {
-                            Toast.makeText(getContext(), "Current location:\n" + location, Toast.LENGTH_LONG).show();
-
-                        }
-                    });
-
-                    //TODO try to refresh fragment
-                    getChildFragmentManager().beginTransaction().detach(getChildFragmentManager().findFragmentById(R.id.main_frame))
-                            .attach(getChildFragmentManager().findFragmentById(R.id.main_frame))
-                            .commit();
-                } else {
-                    mMap.setMyLocationEnabled(false);
-                }
-                break;
-            }
-
-        }
-    }
-
 
 }

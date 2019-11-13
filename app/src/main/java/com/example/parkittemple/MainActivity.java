@@ -1,10 +1,13 @@
 package com.example.parkittemple;
 
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -13,13 +16,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
 
 import javax.annotation.Nullable;
+
+import static com.example.parkittemple.MapFragment.MY_PERMISSIONS_LOCATION;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, RealTimeStreetsFragment.OnFragmentInteractionListener
     , StreetListFragment.OnFragmentInteractionListener, MapFragment.onMapInteraction{
@@ -75,7 +82,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             Log.d(TAG, "onBackPressed: back stack = " + getSupportFragmentManager().getBackStackEntryCount());
-            if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            for(int entry = 0; entry < getSupportFragmentManager().getBackStackEntryCount(); entry++){
+                Log.i(TAG, "Found fragment: " + getSupportFragmentManager().getBackStackEntryAt(entry).getId());
+            }
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getSupportFragmentManager().popBackStack();
             } else {
                 super.onBackPressed();
@@ -141,19 +151,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
 
+        //TODO create custom backstack
+        //BackStack can have max 2 fragments (entrycount = 2)
+        //Always remove oldest fragment before adding new fragment
+
+
         if (fragment != null) {
             Log.d(TAG, "onNavigationItemSelected: back stack flag = " + backStackFlag);
+            if (!backStackFlag) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment, tag).commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment, tag).addToBackStack(null).commit();
+            }
+            getSupportFragmentManager().executePendingTransactions();
             Log.d(TAG, "onNavigationItemSelected: back stack count = " + getSupportFragmentManager().getBackStackEntryCount());
             Log.d(TAG, "onNavigationItemSelected: fragment = " + fragment.getTag());
-            if (!backStackFlag) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment, tag).commitNow();
-            } else {
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment, tag).addToBackStack(tag).commit();
-            }
+
+
         }
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
 
 
     @Override
@@ -169,6 +189,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onStreetClick(Street street) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_frame, StreetDetailsFragment.newInstance(street)).addToBackStack(null).commit();
+                .replace(R.id.main_frame, StreetDetailsFragment.newInstance(street))
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onLocationEnabled() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_frame, new MapFragment(), MAP_FRAGMENT)
+                .commit();
+        Log.d(TAG, "MapFragment: user location is enabled");
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionsResult: permission = " + (grantResults.length > 0));
+        switch (requestCode) {
+            case MY_PERMISSIONS_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    onLocationEnabled();
+
+                } else {
+
+                }
+                break;
+            }
+
+        }
     }
 }

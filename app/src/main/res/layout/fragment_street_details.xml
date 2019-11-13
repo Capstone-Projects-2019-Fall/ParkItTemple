@@ -19,15 +19,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/reg_sign"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include2" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview_street_details"
-        android:layout_width="0dp"
-        android:layout_height="455dp"
-        app:layout_constraintEnd_toEndOf="@+id/reg_sign"
-        app:layout_constraintStart_toStartOf="@+id/free"
-        app:layout_constraintTop_toBottomOf="@+id/reg_sign" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <include
         android:id="@+id/reg_sign"
@@ -35,11 +27,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/notes_val"
-        app:layout_constraintTop_toBottomOf="@+id/include2" />
+        app:layout_constraintTop_toTopOf="@+id/street_name" />
 
     <TextView
         android:id="@+id/notes"
@@ -82,13 +73,27 @@
         app:layout_constraintTop_toBottomOf="@+id/notes_val" />
 
     <include
-        android:id="@+id/include2"
-        layout="@layout/app_bar_main"
+        android:id="@+id/prob_view"
+        layout="@layout/street_prob_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/free" />
+
+    <TextView
+        android:id="@+id/alert_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:text="@string/alert_text"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

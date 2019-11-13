@@ -11,4 +11,14 @@
         android:layout_height="match_parent">
     </FrameLayout>
 
+    <RelativeLayout
+        android:id="@+id/bac_dim_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#86000000"
+        android:visibility="gone" >
+    </RelativeLayout>
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
