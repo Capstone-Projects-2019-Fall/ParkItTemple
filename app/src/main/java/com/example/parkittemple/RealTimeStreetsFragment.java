@@ -1,28 +1,19 @@
 package com.example.parkittemple;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.os.Message;
-import android.os.Parcelable;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
-
 import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
 
 import java.util.ArrayList;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static android.content.ContentValues.TAG;
 
@@ -35,7 +26,6 @@ public class RealTimeStreetsFragment extends Fragment {
     private TempleMap templeMap;
     private RecyclerView recyclerView;
 
-    private OnFragmentInteractionListener parentActivity;
 
     public RealTimeStreetsFragment() {
         // Required empty public constructor
@@ -60,28 +50,13 @@ public class RealTimeStreetsFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
             recyclerView.setAdapter(new StreetListRecyclerViewAdapter(getRealTimeStreets()));
             Log.d(TAG, "onCreateView: street list view" + templeMap.getStreets().size());
+
         }
+
 
         return view;
     }
 
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            parentActivity = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        parentActivity = null;
-    }
 
     private ArrayList<Street> getRealTimeStreets() {
 
@@ -93,9 +68,4 @@ public class RealTimeStreetsFragment extends Fragment {
         return streets;
     }
 
-
-    public interface OnFragmentInteractionListener {
-
-        void onStreetSelectedFromRealTimeFragment(Street street);
-    }
 }

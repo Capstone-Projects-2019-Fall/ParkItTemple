@@ -2,12 +2,10 @@ package com.example.parkittemple;
 
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Process;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -16,11 +14,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
 import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
 
@@ -28,8 +24,7 @@ import javax.annotation.Nullable;
 
 import static com.example.parkittemple.MapFragment.MY_PERMISSIONS_LOCATION;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, RealTimeStreetsFragment.OnFragmentInteractionListener
-    , StreetListFragment.OnFragmentInteractionListener, MapFragment.onMapInteraction{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, MapFragment.onMapInteraction{
 
 
     private static final String MAP_FRAGMENT = "map_fragment";
@@ -81,12 +76,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            Log.d(TAG, "onBackPressed: back stack = " + getSupportFragmentManager().getBackStackEntryCount());
-            for(int entry = 0; entry < getSupportFragmentManager().getBackStackEntryCount(); entry++){
-                Log.i(TAG, "Found fragment: " + getSupportFragmentManager().getBackStackEntryAt(entry).getId());
-            }
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                getSupportFragmentManager().popBackStack();
+            Log.d(TAG, "onBackPressed: back stack count = " + getSupportFragmentManager().getBackStackEntryCount());
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(MAP_FRAGMENT);
+            if (fragment != null && fragment.isVisible()){
+                Process.killProcess(Process.myPid());
+            } else if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment != null ? fragment : new MapFragment(), MAP_FRAGMENT).commit();
             } else {
                 super.onBackPressed();
             }
@@ -176,14 +171,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
-    @Override
     public void onStreetSelectedFromRealTimeFragment(Street street) {
-
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_frame, RealTimeStreetDetails.newInstance(street))
+                .addToBackStack(null)
+                .commit();
     }
 
-    @Override
     public void onStreetSelectedFromStreetListFragment(Street street) {
-
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.main_frame, StreetDetailsFragment.newInstance(street))
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override

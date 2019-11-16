@@ -2,43 +2,37 @@ package com.example.parkittemple;
 
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.parkittemple.database.Street;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
-import org.w3c.dom.Text;
+import com.example.parkittemple.database.Street;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import static android.content.ContentValues.TAG;
 import static com.example.parkittemple.MapFragment.DESCRIPTION;
 import static com.example.parkittemple.MapFragment.FREE;
 import static com.example.parkittemple.MapFragment.STREET_NAME;
@@ -48,18 +42,21 @@ import static com.example.parkittemple.MapFragment.STREET_NAME;
  * A simple {@link Fragment} subclass.
  */
 public class StreetDetailsFragment extends Fragment {
+    private static final String LAT = "lat";
+    private static final String LNG = "lng";
 
     //TODO
-    /** Load these from the database*/
-    //These are the items that need to be displayed to the user.
-    //This is a very basic setup for testing purposes.
-    private  String[] mDays; //An array of days of the week. Can leave as is or load from db
-    private  String[] mProbs; //An array of probabilities for parking on it's index's respective hour.
-    private  String[] mHours;
-    private  String streetName, description;
-    private  boolean isFree;
-    private TextView notes, street_name, free, prob, alert_text;
-    private Spinner hours, days;
+    /** Load these from the database
+    *These are the items that need to be displayed to the user.
+    *This is a very basic setup for testing purposes. */
+    private String[] mDays; //An array of days of the week. Can leave as is or load from db
+    private String[] mProbs; //An array of probabilities for parking on it's index's respective hour.
+    private String[] mHours;
+    //---------------------------------------------------------
+    private String streetName, description;
+    private double lat,lng;
+    private boolean isFree;
+    private TextView prob;
     private RelativeLayout back_dim_layout;
 
 
@@ -67,12 +64,14 @@ public class StreetDetailsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static StreetDetailsFragment newInstance(Street street) {
+    static StreetDetailsFragment newInstance(Street street) {
         StreetDetailsFragment fragment = new StreetDetailsFragment();
         Bundle args = new Bundle();
         args.putString(STREET_NAME, street.getStreetName());
         args.putString(DESCRIPTION, street.getRegulation().getDescription());
         args.putBoolean(FREE, street.getRegulation().isFree());
+        args.putDouble(LAT, street.getGeoPoints().get(0).getLatitude());
+        args.putDouble(LNG, street.getGeoPoints().get(0).getLongitude());
         fragment.setArguments(args);
         return fragment;
     }
@@ -88,6 +87,8 @@ public class StreetDetailsFragment extends Fragment {
             streetName = bundle.getString(STREET_NAME);
             description = bundle.getString(DESCRIPTION);
             isFree = bundle.getBoolean(FREE);
+            lat = bundle.getDouble(LAT);
+            lng = bundle.getDouble(LNG);
         }
         mDays = getResources().getStringArray(R.array.days);
         mHours = getResources().getStringArray(R.array.hours);
@@ -96,17 +97,18 @@ public class StreetDetailsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        setHasOptionsMenu(true);
 
         View view = inflater.inflate(R.layout.fragment_street_details, container, false);
 
 
-        street_name = view.findViewById(R.id.street_name);
+        TextView street_name = view.findViewById(R.id.street_name);
         street_name.setText(streetName);
-        notes = view.findViewById(R.id.notes_val);
+        TextView notes = view.findViewById(R.id.notes_val);
         notes.setText(description);
-        free = view.findViewById(R.id.free);
+        TextView free = view.findViewById(R.id.free);
         if (description.equals("No parking.") || description.equals("To-do.")){
             view.findViewById(R.id.reg_sign).setVisibility(View.INVISIBLE);
             view.findViewById(R.id.prob_view).setVisibility(View.INVISIBLE);
@@ -126,9 +128,9 @@ public class StreetDetailsFragment extends Fragment {
         }
 
 
-        hours = view.findViewById(R.id.hours_spinner);
+        Spinner hours = view.findViewById(R.id.hours_spinner);
         prob = view.findViewById(R.id.percent);
-        days = view.findViewById(R.id.days_spinner);
+        Spinner days = view.findViewById(R.id.days_spinner);
 
         ArrayAdapter<CharSequence> adapter_hour = ArrayAdapter.createFromResource(view.getContext(),R.array.hours, android.R.layout.simple_spinner_item);
         adapter_hour.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -182,13 +184,37 @@ public class StreetDetailsFragment extends Fragment {
         };
         ss.setSpan(clickableSpan, getString(R.string.alert_text).length()- 8, getString(R.string.alert_text).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         ss.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.link_blue)), getString(R.string.alert_text).length()- 8, getString(R.string.alert_text).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        alert_text = view.findViewById(R.id.alert_text_view);
+        TextView alert_text = view.findViewById(R.id.alert_text_view);
         alert_text.setText(ss);
         alert_text.setMovementMethod(LinkMovementMethod.getInstance());
 
 
         // Inflate the layout for this fragment
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.google_maps_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Create a Uri from an intent string. Use the result to create an Intent.
+        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
+
+        // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+
+        // Make the Intent explicit by setting the Google Maps package
+        mapIntent.setPackage("com.google.android.apps.maps");
+
+        // Attempt to start an activity that can handle the Intent
+        startActivity(mapIntent);
+
+        return true;
     }
 
 

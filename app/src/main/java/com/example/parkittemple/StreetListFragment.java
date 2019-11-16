@@ -1,19 +1,15 @@
 package com.example.parkittemple;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Handler;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
@@ -25,7 +21,6 @@ import static android.content.ContentValues.TAG;
 
 public class StreetListFragment extends Fragment {
 
-    private OnFragmentInteractionListener parentActivity;
     private TempleMap templeMap;
     private RecyclerView recyclerView;
 
@@ -55,26 +50,6 @@ public class StreetListFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            parentActivity = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        parentActivity = null;
-    }
 
 
-    public interface OnFragmentInteractionListener {
-
-        void onStreetSelectedFromStreetListFragment(Street street);
-    }
 }

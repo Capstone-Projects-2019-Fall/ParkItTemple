@@ -3,17 +3,13 @@ package com.example.parkittemple;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.parkittemple.database.Street;
-import com.example.parkittemple.database.TempleMap;
 
 import java.util.ArrayList;
 
@@ -57,12 +53,23 @@ public class StreetListRecyclerViewAdapter extends RecyclerView.Adapter<StreetLi
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.street.setText(mStreets.get(position).getStreetName());
+        holder.mView.setOnClickListener(v -> {
+            if (getItemCount() == MainActivity.templeMap.getStreets().size()){
+                ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main_frame, StreetDetailsFragment.newInstance(mStreets.get(position)))
+                        .commit();
+            } else {
+                ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main_frame, RealTimeStreetDetails.newInstance(mStreets.get(position)))
+                        .commit();
+            }
+        });
 
     }
-
 
     @Override
     public int getItemCount() {
         return mStreets.size();
     }
+
 }

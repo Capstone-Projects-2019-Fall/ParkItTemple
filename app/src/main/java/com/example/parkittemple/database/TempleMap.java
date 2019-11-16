@@ -1,7 +1,5 @@
 package com.example.parkittemple.database;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.android.gms.tasks.Task;
