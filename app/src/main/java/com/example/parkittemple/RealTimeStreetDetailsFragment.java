@@ -37,7 +37,7 @@ import static com.example.parkittemple.MapFragment.FREE;
 import static com.example.parkittemple.MapFragment.STREET_NAME;
 
 
-public class RealTimeStreetDetails extends Fragment {
+public class RealTimeStreetDetailsFragment extends Fragment {
 
     private static final String LAT = "lat";
     private static final String LNG = "lng";
@@ -57,13 +57,13 @@ public class RealTimeStreetDetails extends Fragment {
     private RelativeLayout back_dim_layout;
 
 
-    public RealTimeStreetDetails() {
+    public RealTimeStreetDetailsFragment() {
         // Required empty public constructor
     }
 
 
-    public static RealTimeStreetDetails newInstance(Street street) {
-        RealTimeStreetDetails fragment = new RealTimeStreetDetails();
+    public static RealTimeStreetDetailsFragment newInstance(Street street) {
+        RealTimeStreetDetailsFragment fragment = new RealTimeStreetDetailsFragment();
         Bundle args = new Bundle();
         args.putString(STREET_NAME, street.getStreetName());
         args.putString(DESCRIPTION, street.getRegulation().getDescription());

@@ -60,7 +60,7 @@ public class StreetListRecyclerViewAdapter extends RecyclerView.Adapter<StreetLi
                         .commit();
             } else {
                 ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.main_frame, RealTimeStreetDetails.newInstance(mStreets.get(position)))
+                        .replace(R.id.main_frame, RealTimeStreetDetailsFragment.newInstance(mStreets.get(position)))
                         .commit();
             }
         });

@@ -168,23 +168,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-
-
-
-    public void onStreetSelectedFromRealTimeFragment(Street street) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_frame, RealTimeStreetDetails.newInstance(street))
-                .addToBackStack(null)
-                .commit();
-    }
-
-    public void onStreetSelectedFromStreetListFragment(Street street) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_frame, StreetDetailsFragment.newInstance(street))
-                .addToBackStack(null)
-                .commit();
-    }
-
     @Override
     public void onStreetClick(Street street) {
         getSupportFragmentManager().beginTransaction()
