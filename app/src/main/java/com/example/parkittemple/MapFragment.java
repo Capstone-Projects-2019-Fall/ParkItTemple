@@ -74,9 +74,6 @@ public class MapFragment extends Fragment {
     private GoogleMap mMap;
     private TempleMap tm;
     private Handler handler;
-    private boolean outOfBoundsDisplayed;
-    private PopupWindow popupWindow;
-
 
     public MapFragment() {
         // Required empty public constructor
@@ -288,21 +285,6 @@ public class MapFragment extends Fragment {
         return root;
     }
 
-    private boolean inBounds(LatLng target) {
-        boolean eastbound = target.longitude < MapFragment.TEMPLE_LATLNGBOUND.northeast.longitude;
-        boolean westbound = target.longitude > MapFragment.TEMPLE_LATLNGBOUND.southwest.longitude;
-        boolean inLng;
-
-        if (MapFragment.TEMPLE_LATLNGBOUND.northeast.longitude < MapFragment.TEMPLE_LATLNGBOUND.southwest.longitude){
-            inLng = eastbound || westbound;
-        } else {
-            inLng = eastbound && westbound;
-        }
-
-        boolean inLat = target.latitude > MapFragment.TEMPLE_LATLNGBOUND.southwest.latitude && target.latitude < MapFragment.TEMPLE_LATLNGBOUND.northeast.latitude;
-
-        return inLat && inLng;
-    }
 
     @Override
     public void onAttach(Context context) {
