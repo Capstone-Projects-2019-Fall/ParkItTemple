@@ -81,7 +81,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (fragment != null && fragment.isVisible()){
                 Process.killProcess(Process.myPid());
             } else if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment != null ? fragment : new MapFragment(), MAP_FRAGMENT).commit();
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.fade_in, R.anim.fade_out)
+                        .replace(R.id.main_frame, fragment != null ? fragment : new MapFragment(), MAP_FRAGMENT)
+                        .commit();
             } else {
                 super.onBackPressed();
             }
@@ -146,17 +149,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
 
-        //TODO create custom backstack
-        //BackStack can have max 2 fragments (entrycount = 2)
-        //Always remove oldest fragment before adding new fragment
-
 
         if (fragment != null) {
             Log.d(TAG, "onNavigationItemSelected: back stack flag = " + backStackFlag);
             if (!backStackFlag) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment, tag).commit();
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                        .replace(R.id.main_frame, fragment, tag)
+                        .commit();
             } else {
-                getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, fragment, tag).addToBackStack(null).commit();
+                getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                        .replace(R.id.main_frame, fragment, tag)
+                        .addToBackStack(null)
+                        .commit();
             }
             getSupportFragmentManager().executePendingTransactions();
             Log.d(TAG, "onNavigationItemSelected: back stack count = " + getSupportFragmentManager().getBackStackEntryCount());
@@ -171,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onStreetClick(Street street) {
         getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.fade_in_long,R.anim.fade_out)
                 .replace(R.id.main_frame, StreetDetailsFragment.newInstance(street))
                 .addToBackStack(null)
                 .commit();

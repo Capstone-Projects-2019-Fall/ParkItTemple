@@ -56,10 +56,12 @@ public class StreetListRecyclerViewAdapter extends RecyclerView.Adapter<StreetLi
         holder.mView.setOnClickListener(v -> {
             if (getItemCount() == MainActivity.templeMap.getStreets().size()){
                 ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
                         .replace(R.id.main_frame, StreetDetailsFragment.newInstance(mStreets.get(position)))
                         .commit();
             } else {
                 ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
                         .replace(R.id.main_frame, RealTimeStreetDetailsFragment.newInstance(mStreets.get(position)))
                         .commit();
             }
