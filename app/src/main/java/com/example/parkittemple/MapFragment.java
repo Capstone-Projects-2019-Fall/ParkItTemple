@@ -145,16 +145,11 @@ public class MapFragment extends Fragment {
                     Toast.makeText(getContext(), "Roger that! Coming to you Captain!", Toast.LENGTH_SHORT).show();
                     return false;
                 });
-
-                /*mMap.setOnMyLocationClickListener(new GoogleMap.OnMyLocationClickListener() {
-                    @Override
-                    public void onMyLocationClick(@NonNull Location location) {
-                        Toast.makeText(getContext(), "Current location:\n" + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_LONG).show();
-
-                    }
+                root.findViewById(R.id.temple_button).setOnClickListener(v -> {
+                    Toast.makeText(getContext(), "Roger that! Going to campus!", Toast.LENGTH_SHORT).show();
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(TEMPLE_LAT,TEMPLE_LNG)));
                 });
 
-                 */
             }
 
 
@@ -203,24 +198,6 @@ public class MapFragment extends Fragment {
                         showPolylines = false;
                     }
                 }
-
-                /*
-                //user is not at Temple
-                Log.d(TAG, "onCreateView: inBounds = " + inBounds(mMap.getCameraPosition().target));
-                Log.d(TAG, "onCreateView: outOfBoundsDisplayed = " + outOfBoundsDisplayed);
-                outOfBoundsDisplayed = popupWindow != null && popupWindow.isShowing();
-                if (!inBounds(mMap.getCameraPosition().target)){
-                    if (!outOfBoundsDisplayed) {
-                        showOutOfBoundsPopUp(root);
-                    }
-                }
-                if (inBounds(mMap.getCameraPosition().target)){
-                    if (popupWindow != null) {
-                        popupWindow.dismiss();
-                    }
-                }
-
-                 */
 
             });
             mMap.setOnInfoWindowClickListener(marker -> {
@@ -370,38 +347,6 @@ public class MapFragment extends Fragment {
          */
 
         return Color.BLACK;
-    }
-
-    private void showOutOfBoundsPopUp(View anchorView) {
-
-
-        View view = getLayoutInflater().inflate(R.layout.popup_out_of_bounds, null);
-
-        popupWindow = new PopupWindow(view,
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        // Set an elevation value for popup window
-        // Call requires API level 21
-        popupWindow.setElevation(6.0f);
-
-
-        view.setOnClickListener(v -> {
-            Toast.makeText(view.getContext(), "Got it! Going back to campus!", Toast.LENGTH_SHORT).show();
-            popupWindow.dismiss();
-        });
-
-
-        // If the PopupWindow should be focusable
-        popupWindow.setFocusable(false);
-        popupWindow.setOnDismissListener(() -> {
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(new LatLng(TEMPLE_LAT,TEMPLE_LNG)));
-            outOfBoundsDisplayed = false;
-        });
-
-
-        // Using location, the PopupWindow will be displayed right under anchorView
-        popupWindow.showAtLocation(anchorView, Gravity.BOTTOM, 0, 8);
-        outOfBoundsDisplayed = popupWindow != null && popupWindow.isShowing();
     }
 
     private LatLng midPoint(List<LatLng> geopoints){
