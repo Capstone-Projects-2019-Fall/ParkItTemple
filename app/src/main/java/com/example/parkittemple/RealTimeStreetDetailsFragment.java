@@ -4,6 +4,8 @@ package com.example.parkittemple;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -29,6 +31,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.parkittemple.database.Street;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -53,7 +56,7 @@ public class RealTimeStreetDetailsFragment extends Fragment {
     private String streetName, description;
     private double lat,lng;
     private boolean isFree;
-    private TextView prob;
+    private TextView prob, available_spots;
     private RelativeLayout back_dim_layout;
 
 
@@ -183,13 +186,47 @@ public class RealTimeStreetDetailsFragment extends Fragment {
         alert_text.setText(ss);
         alert_text.setMovementMethod(LinkMovementMethod.getInstance());
 
-        TextView available_spots = view.findViewById(R.id.num_spots);
-        available_spots.setText("10");
-
 
         // Inflate the layout for this fragment
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Handler handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                //TODO update textview here
+                //Change "String.valueOf((int) (Math.random() * 100 % 20))" to actual database value
+                available_spots.setText(String.valueOf((int) (Math.random() * 100 % 20)));
+                return false;
+            }
+        });
+
+        View view = getView();
+        if (view != null) {
+            available_spots = view.findViewById(R.id.num_spots);
+            available_spots.setText("10"/*Get database value*/);
+
+            Thread t = new Thread() {
+                @Override
+                public void run() {
+                    while (this.isAlive()) {
+                        try {
+                            sleep(5000);
+                            handler.sendEmptyMessage(1);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+            t.start();
+        }
+    }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
