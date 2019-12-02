@@ -26,13 +26,13 @@ public class TempleMap implements Serializable {
     public TempleMap() {
         streets = new ArrayList<>();
         loadMapFromDB();
+        loadPiInfoFromDB();
         Log.d("Constraints", "ArrayList size: " + streets.size() + "\n");
     }
 
     public List<Street> getStreets() {
         return this.streets;
     }
-
 
     public void loadMapFromDB() {
 
@@ -52,47 +52,41 @@ public class TempleMap implements Serializable {
         } catch (ExecutionException | InterruptedException e) {
             Log.d(TAG, "get failed with ", e);
         }
+    }
 
-        /*docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        //Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+    public void loadPiInfoFromDB() {
 
-                        Street street = convertToStreet(document);
-                        streets.add(street);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
+        for (Street street : streets) {
+
+            String piID = street.getPiID();
+
+            if (piID.equals("null")) {
+                continue;
             }
-        });
 
-        db.collection("streets")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete( Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
+            Task<DocumentSnapshot> task = db.collection("pi").document(piID).get();
 
-                                Street street = convertToStreet(document);
-                                getStreets().add(street);
+            try {
 
-                                //Log.d(TAG, "Adding street: " + document.getId());
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+                DocumentSnapshot document = Tasks.await(task);
 
-         */
+                Map<String, Object> dataMap = document.getData();
+
+                Calculation calculation = new Calculation();
+
+                calculation.setTotalSpots((String) dataMap.get("total_spots"));
+                calculation.setAvailableSpots((String) dataMap.get("available_spots"));
+
+                street.setCalculation(calculation);
+
+                logStreet(street);
+
+            } catch (ExecutionException | InterruptedException e) {
+                Log.d(TAG, "get failed with ", e);
+            }
+        }
     }
 
     public Street convertToStreet(DocumentSnapshot documentSnapshot) {
@@ -102,26 +96,29 @@ public class TempleMap implements Serializable {
         Map<String, Object> map = documentSnapshot.getData();
 
         street.setStreetName((String)map.get("street_name"));
+        street.setPiID((String)map.get("pi"));
 
         /*for (String x : map.keySet()) {
             Log.d(TAG, "Data map key: " + x + "\n");
         }*/
 
-        Map<String, Object> calculationMap = (Map)map.get("calculation");
+        /*Map<String, Object> calculationMap = (Map)map.get("calculation");
 
         Calculation calculation = new Calculation();
         if (calculationMap != null) {
             calculation.setProbability((String) calculationMap.get("probability"));
             calculation.setAvailableSpots((String) calculationMap.get("available_spots"));
         }
-        street.setCalculation(calculation);
+        street.setCalculation(calculation); */
 
         /*for (String x : calculationMap.keySet()) {
             Log.d(TAG, "CALCULATION Data map key: " + x + "\n");
         }*/
 
         List<GeoPoint> geoPoints = (List)map.get("geopoints");
-        street.setGeoPoints(geoPoints);
+        if (!(geoPoints == null)) {
+            street.setGeoPoints(geoPoints);
+        }
 
         /*for (GeoPoint g : geoPoints) {
             Log.d(TAG, "GEOPOINT Data map long: " + g.getLongitude() + ". lat: " + g.getLatitude() + ".\n");
@@ -172,5 +169,28 @@ public class TempleMap implements Serializable {
             Log.d(TAG, "STREET Max hours: " + s.getRegulation().getMaxHours() + "\n");
 
         }
+    }
+
+    public static void logStreet(Street s) {
+
+        Log.d(TAG, "STREET Street name: " + s.getStreetName() + "\n");
+
+
+        if (s.getGeoPoints() != null) {
+            for (GeoPoint g : s.getGeoPoints()) {
+                Log.d(TAG, "STREET GeoPoint: " + g.getLatitude() + ", " + g.getLongitude() + "\n");
+            }
+        }
+
+        Log.d(TAG, "STREET Available spots: " + s.getCalculation().getAvailableSpots() + "\n");
+        Log.d(TAG, "STREET Probability: " + s.getCalculation().getProbability() + "\n");
+
+        Log.d(TAG, "STREET Description: " + s.getRegulation().getDescription() + "\n");
+        Log.d(TAG, "STREET Note: " + s.getRegulation().getNote() + "\n");
+        Log.d(TAG, "STREET IsFree: " + s.getRegulation().isFree() + "\n");
+        Log.d(TAG, "STREET Start: " + s.getRegulation().getStart() + "\n");
+        Log.d(TAG, "STREET End: " + s.getRegulation().getEnd() + "\n");
+        Log.d(TAG, "STREET Max hours: " + s.getRegulation().getMaxHours() + "\n");
+
     }
 }
