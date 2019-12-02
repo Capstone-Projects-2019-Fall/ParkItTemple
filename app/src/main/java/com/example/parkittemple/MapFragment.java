@@ -234,8 +234,8 @@ public class MapFragment extends Fragment {
                  */
                 Marker testMarker = mMap.addMarker(new MarkerOptions()
                         .position(centerPoint(polygonX.getPoints()))
-                        .title("Lot 7"));
-                testMarker.setTag("Lot 7");
+                        .title("SERC Parking Lot 7"));
+                testMarker.setTag("SERC Parking Lot 7");
                 testMarker.showInfoWindow();
 
             });
@@ -243,37 +243,32 @@ public class MapFragment extends Fragment {
             handler = new Handler(msg -> {
                 if (msg.what== 1) {
                     Log.d(TAG, "onCreate: TempleMap size = " + tm.getStreets().size());
-                    //TODO add parking lot schema to db
-                    /* ***************Add polylines and polygons here
-                    We have to run a loop to add each street as a separate polyline
-                    Set tag as the Street Object (polyline tags can accept arbitrary objects)
-                    Load streets into a list: List<Street> streets = new ArrayList<>();
-                    Run loop: for each street in list: generate polyline*/
+
                     for (int i = 0; i < tm.getStreets().size(); i++) {
-                        Polyline polyline = mMap.addPolyline(new PolylineOptions()
-                                .clickable(true)
-                                .width(20));
-                        polyline.setPoints(geoToLatLng(tm.getStreets().get(i).getGeoPoints()));
-                        polyline.setTag(tm.getStreets().get(i));
-                        polyline.setColor(setPolylineColor(tm.getStreets().get(i)));
+
+                        if (tm.getStreets().get(i).getStreetName().equals("demostreet")){
+                            PolygonOptions SERCParkingLot = new PolygonOptions()
+                                    .add(new LatLng(39.982490, -75.151671),     //top right
+                                            new LatLng(39.982564, -75.152224),  //top left
+                                            new LatLng(39.981800, -75.152412),  //bottom left
+                                            new LatLng(39.981714, -75.151841))  //bottom right
+                                    .fillColor(getResources().getColor(R.color.blue_semi_trans))
+                                    .clickable(true)
+                                    .strokeWidth(1f);
+
+                            mMap.addPolygon(SERCParkingLot);
+
+                        } else {
+
+                            Polyline polyline = mMap.addPolyline(new PolylineOptions()
+                                    .clickable(true)
+                                    .width(20));
+                            if (tm.getStreets().get(i).getGeoPoints() != null)
+                            polyline.setPoints(geoToLatLng(tm.getStreets().get(i).getGeoPoints()));
+                            polyline.setTag(tm.getStreets().get(i));
+                            polyline.setColor(setPolylineColor(tm.getStreets().get(i)));
+                        }
                     }
-
-
-                    //TODO this is a test polygon
-                    // Instantiates a new Polygon object and adds points to define a rectangle
-                    // MAKE SURE TO ADD LATLNG IN THIS ORDER: top right -> top left -> bottom left -> bottom right
-                    PolygonOptions SERCParkingLot = new PolygonOptions()
-                            .add(new LatLng(39.982490, -75.151671),     //top right
-                                    new LatLng(39.982564, -75.152224),  //top left
-                                    new LatLng(39.981800, -75.152412),  //bottom left
-                                    new LatLng(39.981714, -75.151841))  //bottom right
-                            .fillColor(getResources().getColor(R.color.blue_semi_trans))
-                            .clickable(true)
-                            .strokeWidth(1f);
-
-                    // Get back the mutable Polygon
-                    Polygon polygon = mMap.addPolygon(SERCParkingLot);
-
                     return true;
                 }
                 return false;
@@ -304,7 +299,7 @@ public class MapFragment extends Fragment {
     }
 
     //Converts a list of firebase geopoints to a list of googlemaps latlng
-    private List<LatLng> geoToLatLng(List<GeoPoint> geoPoints) {
+    public static List<LatLng> geoToLatLng(List<GeoPoint> geoPoints) {
         ArrayList<LatLng> list = new ArrayList<>();
         for (int i = 0; i < geoPoints.size(); i++ ){
             list.add(new LatLng(geoPoints.get(i).getLatitude(), geoPoints.get(i).getLongitude()));

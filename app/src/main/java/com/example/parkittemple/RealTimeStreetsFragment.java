@@ -10,10 +10,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.parkittemple.database.Regulation;
 import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
@@ -61,9 +65,33 @@ public class RealTimeStreetsFragment extends Fragment {
     private ArrayList<Street> getRealTimeStreets() {
 
         ArrayList<Street> streets = new ArrayList<>();
+        Street realTimeStreet = new Street();
+
+        realTimeStreet.setStreetName("REAL TIME");
+
+        List<GeoPoint> points = new ArrayList<>();
+        points.add(new GeoPoint(12.000,13.000));
+        points.add(new GeoPoint(12.000,13.000));
+        realTimeStreet.setGeoPoints(points);
+
+
+        Regulation regulation = new Regulation();
+        regulation.setNote("something");
+        regulation.setDescription("something");
+        regulation.setFree(true);
+        regulation.setMaxHours(null);
+        regulation.setStart(null);
+        regulation.setEnd(null);
+        realTimeStreet.setRegulation(regulation);
+
+        streets.add(realTimeStreet);
+
+        /*
         streets.add(templeMap.getStreets().get(0));
         streets.add(templeMap.getStreets().get(1));
         streets.add(templeMap.getStreets().get(2));
+
+         */
 
         return streets;
     }

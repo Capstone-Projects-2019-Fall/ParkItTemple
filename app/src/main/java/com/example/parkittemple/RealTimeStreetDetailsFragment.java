@@ -12,6 +12,7 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,12 +30,23 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.parkittemple.database.Calculation;
 import com.example.parkittemple.database.Street;
+import com.example.parkittemple.database.TempleMap;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
+import static androidx.constraintlayout.widget.Constraints.TAG;
 import static com.example.parkittemple.MapFragment.DESCRIPTION;
 import static com.example.parkittemple.MapFragment.FREE;
 import static com.example.parkittemple.MapFragment.STREET_NAME;
@@ -198,9 +210,7 @@ public class RealTimeStreetDetailsFragment extends Fragment {
         Handler handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                //TODO update textview here
-                //Change "String.valueOf((int) (Math.random() * 100 % 20))" to actual database value
-                available_spots.setText(String.valueOf((int) (Math.random() * 100 % 20)));
+                available_spots.setText(String.valueOf(msg.obj));
                 return false;
             }
         });
@@ -208,15 +218,23 @@ public class RealTimeStreetDetailsFragment extends Fragment {
         View view = getView();
         if (view != null) {
             available_spots = view.findViewById(R.id.num_spots);
-            available_spots.setText("10"/*Get database value*/);
+            available_spots.setText("--");
+            TempleMap tm = MainActivity.templeMap;
 
             Thread t = new Thread() {
                 @Override
                 public void run() {
                     while (this.isAlive()) {
                         try {
-                            sleep(5000);
-                            handler.sendEmptyMessage(1);
+                            sleep(3000);
+
+                            for (Street street: MainActivity.templeMap.getStreets()){
+                                if (street.getStreetName().equals("demostreet")){
+                                    Message msg = Message.obtain();
+                                    msg.obj = street.getCalculation().getAvailableSpots();
+                                    handler.sendMessage(msg);
+                                }
+                            }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
