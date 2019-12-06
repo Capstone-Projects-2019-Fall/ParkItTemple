@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <Spinner
+        android:id="@+id/days_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="@string/date"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/hours_spinner"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/percent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:text="@string/prob_perc"
+        android:textColor="@android:color/black"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toBottomOf="@+id/hours_spinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/hours_spinner"
+        app:layout_constraintTop_toBottomOf="@+id/probability" />
+
+    <TextView
+        android:id="@+id/probability"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/probability"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toEndOf="@+id/percent"
+        app:layout_constraintStart_toStartOf="@+id/percent"
+        app:layout_constraintTop_toTopOf="@+id/hour" />
+
+    <TextView
+        android:id="@+id/hour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/hour"
+        android:textColor="@android:color/black"
+        app:layout_constraintLeft_toLeftOf="@+id/hours_spinner"
+        app:layout_constraintRight_toRightOf="@+id/hours_spinner"
+        app:layout_constraintTop_toTopOf="@+id/textView" />
+
+    <Spinner
+        android:id="@+id/hours_spinner"
+        style="@style/Widget.AppCompat.Spinner"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="@+id/days_spinner"
+        app:layout_constraintEnd_toStartOf="@+id/percent"
+        app:layout_constraintStart_toEndOf="@+id/days_spinner"
+        app:layout_constraintTop_toBottomOf="@+id/hour" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/date"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="@+id/days_spinner"
+        app:layout_constraintStart_toStartOf="@+id/days_spinner"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

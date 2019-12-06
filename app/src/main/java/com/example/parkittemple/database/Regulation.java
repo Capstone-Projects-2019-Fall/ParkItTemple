@@ -2,7 +2,9 @@ package com.example.parkittemple.database;
 
 import com.google.firebase.Timestamp;
 
-public class Regulation {
+import java.io.Serializable;
+
+public class Regulation implements Serializable {
 
     private String description;
     private String note;

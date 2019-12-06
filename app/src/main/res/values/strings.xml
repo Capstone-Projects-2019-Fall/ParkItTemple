@@ -15,6 +15,10 @@
     <string name="free">free</string>
     <string name="free_park">Free parking</string>
     <string name="paid_park">Paid parking</string>
+    <string name="navigation_drawer_open">Nav open</string>
+    <string name="navigation_drawer_close">Nav close</string>
+    <string name="app_logo">App Logo</string>
+    <string name="streets">Streets</string>
     <string-array name="days">
         <item>Mon</item>
         <item>Tues</item>
@@ -77,6 +81,32 @@
         <item>66.6%</item>
         <item>33.3%</item>
         <item>30.0%</item>
-
     </string-array>
+
+    <string-array name="notify">
+        <item>5 minutes before</item>
+        <item>10 minutes before</item>
+        <item>15 minutes before</item>
+        <item>30 minutes before</item>
+        <item>1 hour before</item>
+    </string-array>
+
+    <string name="alert_text">Did you park here? Let us know so we can alert you when your time is up! Alert me</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="date_2">Date</string>
+    <string name="today_s_date">Today\'s date</string>
+    <string name="time_parked">Time</string>
+    <string name="notify">Notify</string>
+    <string name="out_of_bounds">Hmmm... I don\'t know what you\'re looking for, but if you need to go back to campus just give me a tap!</string>
+    <string name="directions">Directions</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="available_spots">Available Spots</string>
+    <string name="map">Map</string>
+    <string name="configure_rpi">Configure RPi</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="number_of_spots">Number of Spots</string>
 </resources>

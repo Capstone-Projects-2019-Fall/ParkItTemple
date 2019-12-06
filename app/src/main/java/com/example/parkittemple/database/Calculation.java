@@ -1,16 +1,27 @@
 package com.example.parkittemple.database;
 
-public class Calculation {
+import java.io.Serializable;
 
-    private String availableSpots;
+public class Calculation implements Serializable {
+
+    private long availableSpots;
+    private long totalSpots;
     private String probability;
 
-    public String getAvailableSpots() {
+    public long getAvailableSpots() {
         return availableSpots;
     }
 
-    public void setAvailableSpots(String spotsAvailable) {
+    public void setAvailableSpots(long spotsAvailable) {
         this.availableSpots = spotsAvailable;
+    }
+
+    public long getTotalSpots() {
+        return totalSpots;
+    }
+
+    public void setTotalSpots(long totalSpots) {
+        this.totalSpots = totalSpots;
     }
 
     public String getProbability() {

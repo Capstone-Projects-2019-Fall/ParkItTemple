@@ -1,12 +1,15 @@
+
 package com.example.parkittemple.database;
 
 import com.google.firebase.firestore.GeoPoint;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Street {
+public class Street implements Serializable {
 
     private String streetName;
+    private String piID;
     private List<GeoPoint> geoPoints;
     private Regulation regulation;
     private Calculation calculation;
@@ -17,6 +20,14 @@ public class Street {
 
     public void setStreetName(String streetName) {
         this.streetName = streetName;
+    }
+
+    public String getPiID() {
+        return this.piID;
+    }
+
+    public void setPiID(String piID) {
+        this.piID = piID;
     }
 
     public List<GeoPoint> getGeoPoints() {
