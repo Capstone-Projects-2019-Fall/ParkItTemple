@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String REAL_TIME_FRAG = "real_time";
     private static final String STREET_LIST_FRAG = "street_list";
     private static final String TAG = "Main Activity";
+    private static final String CONFIG_RPI = "config_rpi";
     DrawerLayout drawer;
     ActionBarDrawerToggle actionBarDrawerToggle;
     NavigationView navigationView;
@@ -125,6 +126,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         boolean backStackFlag = true;
 
         switch (menuItem.getItemId()) {
+            case R.id.map:
+                tag = MAP_FRAGMENT;
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment != null){
+                    backStackFlag = false;
+                    break;
+                } else {
+                    fragment = new MapFragment();
+                }
+                break;
             case R.id.real_time:
                 tag = REAL_TIME_FRAG;
                 fragment = getSupportFragmentManager().findFragmentByTag(tag);
@@ -143,6 +154,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     break;
                 } else {
                     fragment = new StreetListFragment();
+                }
+                break;
+            case R.id.config_pi:
+                tag = CONFIG_RPI;
+                fragment = getSupportFragmentManager().findFragmentByTag(tag);
+                if (fragment != null){
+                    backStackFlag = false;
+                    break;
+                } else {
+                    fragment = new ConfigRPiFragment();
                 }
                 break;
             default:

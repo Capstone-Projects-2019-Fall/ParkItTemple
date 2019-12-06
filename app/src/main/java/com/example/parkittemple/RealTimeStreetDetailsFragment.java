@@ -70,6 +70,7 @@ public class RealTimeStreetDetailsFragment extends Fragment {
     private boolean isFree;
     private TextView prob, available_spots;
     private RelativeLayout back_dim_layout;
+    boolean isVisible;
 
 
     public RealTimeStreetDetailsFragment() {
@@ -88,6 +89,7 @@ public class RealTimeStreetDetailsFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -210,7 +212,7 @@ public class RealTimeStreetDetailsFragment extends Fragment {
         Handler handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                available_spots.setText(String.valueOf(msg.obj));
+                available_spots.setText(String.valueOf(msg.what));
                 return false;
             }
         });
@@ -219,21 +221,28 @@ public class RealTimeStreetDetailsFragment extends Fragment {
         if (view != null) {
             available_spots = view.findViewById(R.id.num_spots);
             available_spots.setText("--");
-            TempleMap tm = MainActivity.templeMap;
+            isVisible = true;
 
             Thread t = new Thread() {
                 @Override
                 public void run() {
-                    while (this.isAlive()) {
+                    while (isVisible) {
                         try {
                             sleep(3000);
 
-                            for (Street street: MainActivity.templeMap.getStreets()){
-                                if (street.getStreetName().equals("demostreet")){
-                                    Message msg = Message.obtain();
-                                    msg.obj = street.getCalculation().getAvailableSpots();
-                                    handler.sendMessage(msg);
-                                }
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                            Task<QuerySnapshot> task = db.collection("pi").get();
+
+                            try {
+                                QuerySnapshot documents = Tasks.await(task);
+
+                               Map<String, Object> map = documents.getDocuments().get(0).getData();
+                               long spots = (long) map.get("available_spots");
+                               Log.d(TAG, "run: spots :" + spots);
+                               handler.sendEmptyMessage(Math.toIntExact(spots));
+                            } catch (ExecutionException | InterruptedException e) {
+                                Log.d(TAG, "get failed with ", e);
                             }
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -245,6 +254,11 @@ public class RealTimeStreetDetailsFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible = false;
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

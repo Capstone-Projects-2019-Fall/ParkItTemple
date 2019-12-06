@@ -4,23 +4,23 @@ import java.io.Serializable;
 
 public class Calculation implements Serializable {
 
-    private String availableSpots;
-    private String totalSpots;
+    private long availableSpots;
+    private long totalSpots;
     private String probability;
 
-    public String getAvailableSpots() {
+    public long getAvailableSpots() {
         return availableSpots;
     }
 
-    public void setAvailableSpots(String spotsAvailable) {
+    public void setAvailableSpots(long spotsAvailable) {
         this.availableSpots = spotsAvailable;
     }
 
-    public String getTotalSpots() {
+    public long getTotalSpots() {
         return totalSpots;
     }
 
-    public void setTotalSpots(String totalSpots) {
+    public void setTotalSpots(long totalSpots) {
         this.totalSpots = totalSpots;
     }
 

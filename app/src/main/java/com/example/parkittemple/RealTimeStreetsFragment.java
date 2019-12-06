@@ -67,17 +67,16 @@ public class RealTimeStreetsFragment extends Fragment {
         ArrayList<Street> streets = new ArrayList<>();
         Street realTimeStreet = new Street();
 
-        realTimeStreet.setStreetName("REAL TIME");
+        realTimeStreet.setStreetName("SHRO/SERC");
 
         List<GeoPoint> points = new ArrayList<>();
-        points.add(new GeoPoint(12.000,13.000));
-        points.add(new GeoPoint(12.000,13.000));
+        points.add(new GeoPoint(39.981606,-75.153459));
         realTimeStreet.setGeoPoints(points);
 
 
         Regulation regulation = new Regulation();
-        regulation.setNote("something");
-        regulation.setDescription("something");
+        regulation.setNote("");
+        regulation.setDescription("");
         regulation.setFree(true);
         regulation.setMaxHours(null);
         regulation.setStart(null);

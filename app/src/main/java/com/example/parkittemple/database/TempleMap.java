@@ -76,8 +76,8 @@ public class TempleMap implements Serializable {
 
                 Calculation calculation = new Calculation();
 
-                calculation.setTotalSpots((String) dataMap.get("total_spots"));
-                calculation.setAvailableSpots((String) dataMap.get("available_spots"));
+                calculation.setTotalSpots((long) dataMap.get("total_spots"));
+                calculation.setAvailableSpots((long) dataMap.get("available_spots"));
 
                 street.setCalculation(calculation);
 
