@@ -460,45 +460,7 @@ public class MapFragment extends Fragment {
 
     }
 
-    public void setTotalSpots(String piID, long totalSpots) {
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        for (Street s : tm.getStreets()) {
-
-            if (s.getPiID().equals(piID)) {
-
-                if (s.getCalculation() == null) {
-                    Calculation c = new Calculation();
-                    c.setTotalSpots(totalSpots);
-                    s.setCalculation(c);
-                } else {
-                    s.getCalculation().setTotalSpots(totalSpots);
-                }
-
-                /*
-                 Database write:
-                 */
-
-                DocumentReference piDoc = db.collection("pi").document(piID);
-
-                piDoc
-                        .update("total_spots", totalSpots)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "DocumentSnapshot successfully updated!");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error updating document", e);
-                            }
-                        });
-            }
-        }
-    }
 
     public static TempleMap getTempleMap(){
         return tm;
