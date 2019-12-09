@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "park-it-temple",
+  "private_key_id": "8468470f44010e0106fb7c2b10982d5f5274b97f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCUncWRIIceB3l+\n2ecU+ALWT1xM3wceB+//0qsaLVTduz3EYyakUzYLxoLh0/MaM3nnV1KIBvzTB5qY\nRVMwVHUW0M4+9kh9OghrrEZc/7phyDtwrHq13DqifzyPcx9jD5U2VjD/ksbY28kV\n8pwXsgQHpSK43UMvNOQzD1cxDX3ME9/sBluVaCh52L5IM53Jkmmb5bVPmw62Dt5A\nddEDiJ0HubVFX+cmtj7oUQvD6XCMwaf8cIrD/h9AzGx1DwnmcYuukx0bJtleAl/D\nfSR2X+GR4fAyDM+iabUYTgUXprBLHrD3fvh0/2Eriygo92i4GJp5gDh0c4ZVS+Pb\nPvgTRmgxAgMBAAECggEAAQL8bu8Z4F1UaUXGNg00pr0ST6cmgyCydGs8lTBpDxvY\n0SsMHqr+15BtwGgLE/r0+dtNMWYbxzt6ZM43AWGXzPSVrNXMG0cfes0oyvYGMKd2\naR9RdAa4YvYLBV53IJtg7IZkbb7z6dLAMQ0uXRZuAtfPz1KZRBtf8M2KTkgNWsvm\nrljCatX1XxBVI/Xmpw9P7RdYHsoEb470WigAZXPCarqSavh66RrGyH8FVGv1/R87\nzfK0I7VSPFaBAvFzIL0zUDWEfNyDssUb0tWcF+Fo3Z01WaMyQdEGuDjzvH+UQgKE\nXpF14uzUqi6vi63Y6hCFN3aTdE2YRTfoyoHB8vqJaQKBgQDK2AHn2Cqj9l+b/HRO\nV1215UeJ9KmatHRfE/n3VE3hWEdqChACfUanjLy/97D30hBI/pvPJ3qQV9SIVSXu\nL5VfbSsaw0jepc4oDkUyu0bwxwIGsaj83YQaf7/p9ipFcOJCTimMG7O3+tmVEWhN\nerajjs6KmK4li0vMV+vicN2ZyQKBgQC7j9r8HNqzMjsdZMHBhHH3aLVufRQvLMaE\nj8TEsctFH9oSr1smrOo9d/PwTga+QjRReVff4osxkkERs+jH06Zq/5WowHJHvIv1\nwAQgN3kz6sBfOaOB2gmpqOHoqYSXRfVYvDlnP/6AOb7bZoWoBa/YFTRqkxTiFGxl\nmhs7qJYPKQKBgQCwAZJVu+nz73myffHlcEVt6Y6Tk+n+xQoc3daN12bkW5dL2YNe\nxZkjFSlKYP/7aRicXeCQdS8SREO0MD4DWOKBtNYsGLsIBlLFyuwcQwghMGz/pfR9\nxTA1VhgOSH0RWAvbgLroSbk9sLpPcJVSdWI4tVdeR3EEPsP8gWW6TDjckQKBgQCR\ngkH2UwBMAw0feZpjYjf0I9SVeg3dp1P/ZXXWzsQOxW4uDsKdV4qF03h5Fl9e3Qev\nqX7F3v/zni5C6JsP45/45H2bpGlEQ/8k0SmiQMcTwuwpNBMoWxoh+DYChPirTwfP\nJn82Hcx4d9QcbAYG2xqXfaPjhmWuGwAZNpwoBVsdOQKBgBxNPrEY08SFAeolseHb\nu2S/NYVwzPLJiaE45swHeedyJ3oGsBm6H+lcz6d0O5eAhNANacbEZY14U99pN3Oa\nxBWitt/E6E4cEh79sZ9kbIuT2p1ir86YQSJv2i+Y8CsWliZwLxcOtvSAAl72nqLH\n7eNjMRkWb5nVCxUp4PYXnfim\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-s4nzs@park-it-temple.iam.gserviceaccount.com",
+  "client_id": "108810786299080521928",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-s4nzs%40park-it-temple.iam.gserviceaccount.com"
+}
