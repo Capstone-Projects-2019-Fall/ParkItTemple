@@ -7,6 +7,7 @@ public class Calculation implements Serializable {
     private long availableSpots;
     private long totalSpots;
     private String probability;
+    private long takenSpots;
 
     public long getAvailableSpots() {
         return availableSpots;
@@ -22,6 +23,14 @@ public class Calculation implements Serializable {
 
     public void setTotalSpots(long totalSpots) {
         this.totalSpots = totalSpots;
+    }
+
+    public long getTakenSpots() {
+        return takenSpots;
+    }
+
+    public void setTakenSpots(long takenSpots) {
+        this.takenSpots = takenSpots;
     }
 
     public String getProbability() {
