@@ -157,7 +157,7 @@ public class LotDetails extends Fragment {
                     }
 
                     if (snapshot != null && snapshot.exists()) {
-                        handler.sendEmptyMessage(Math.toIntExact((long) snapshot.get("available_spots")));
+                        handler.sendEmptyMessage(110 - Math.toIntExact((long) snapshot.get("available_spots")));
                         Log.d(TAG, "Current data: " + snapshot.getData());
                     } else {
                         Log.d(TAG, "Current data: null");

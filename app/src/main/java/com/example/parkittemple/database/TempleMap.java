@@ -229,6 +229,8 @@ public class TempleMap {
         return streetNames;
     }
 
+    /*
+
     public void setTotalSpots(String piID, long totalSpots) {
 
         for (Street s : streets) {
@@ -266,7 +268,7 @@ public class TempleMap {
                 s.setPiID(piID);
             }
         }
-    }
+    } */
 }
 
 /*
