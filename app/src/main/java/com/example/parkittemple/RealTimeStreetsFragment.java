@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.parkittemple.database.ParkingLot;
 import com.example.parkittemple.database.Regulation;
 import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
@@ -28,6 +29,7 @@ public class RealTimeStreetsFragment extends Fragment {
     private static final String STREET_LIST = "param1";
 
     private TempleMap templeMap;
+    private ArrayList<ParkingLot> lots;
     private RecyclerView recyclerView;
 
 
@@ -39,7 +41,8 @@ public class RealTimeStreetsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        templeMap = MainActivity.templeMap;
+        templeMap = MapFragment.getTempleMap();
+        lots = MapFragment.getLots();
 
     }
 
@@ -62,9 +65,22 @@ public class RealTimeStreetsFragment extends Fragment {
     }
 
 
-    private ArrayList<Street> getRealTimeStreets() {
+    private ArrayList<Object> getRealTimeStreets() {
 
-        ArrayList<Street> streets = new ArrayList<>();
+        ArrayList<Object> streets = new ArrayList<>();
+        for (Street street : templeMap.getStreets()){
+            if (street.getPiID() != null){
+                streets.add(street);
+            }
+        }
+
+        for (ParkingLot lot : lots){
+            if (lot.getPiID() != null){
+                streets.add(lot);
+            }
+        }
+
+        /*
         Street realTimeStreet = new Street();
 
         realTimeStreet.setStreetName("SHRO/SERC");
@@ -85,12 +101,15 @@ public class RealTimeStreetsFragment extends Fragment {
 
         streets.add(realTimeStreet);
 
+         */
+
         /*
         streets.add(templeMap.getStreets().get(0));
         streets.add(templeMap.getStreets().get(1));
         streets.add(templeMap.getStreets().get(2));
 
          */
+
 
         return streets;
     }

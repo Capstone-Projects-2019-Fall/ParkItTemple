@@ -81,13 +81,19 @@ public class TempleMap {
 
                            if (doc.get("available_spots") != null) {
                                String piID = doc.getId();
-                               long takenSpots = (long) doc.get("available_spots");
+                               long takenSpots;
+                               try{
+                                   takenSpots = (long) doc.get("available_spots");
+                               } catch (ClassCastException class_e){
+                                   takenSpots = 0;
+                               }
+
                                Log.d(TAG, "PiID: " + piID);
                                Log.d(TAG, "Taken Spots: " + takenSpots);
 
 
                                for (Street street : streets) {
-                                   if (street.getPiID().equals(piID)) {
+                                   if ((street.getPiID() != null) && street.getPiID().equals(piID)) {
 
                                        if (street.getCalculation() == null) {
                                            Calculation calculation = new Calculation();

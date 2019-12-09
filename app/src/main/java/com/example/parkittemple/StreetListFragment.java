@@ -23,7 +23,7 @@ public class StreetListFragment extends Fragment {
 
     private TempleMap templeMap;
     private RecyclerView recyclerView;
-    ArrayList<Street> newMap;
+    ArrayList<Object> newMap;
 
 
     public StreetListFragment() {
@@ -33,7 +33,7 @@ public class StreetListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        templeMap = MainActivity.templeMap;
+        templeMap = MapFragment.getTempleMap();
         newMap = new ArrayList<>();
         for (Street street : templeMap.getStreets()){
             if (!street.getStreetName().equals("demostreet") && !street.getStreetName().equals("TEST")){

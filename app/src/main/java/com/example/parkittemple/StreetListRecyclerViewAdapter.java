@@ -9,13 +9,14 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.parkittemple.database.ParkingLot;
 import com.example.parkittemple.database.Street;
 
 import java.util.ArrayList;
 
 public class StreetListRecyclerViewAdapter extends RecyclerView.Adapter<StreetListRecyclerViewAdapter.MyViewHolder>{
 
-    private final ArrayList<Street> mStreets;
+    private final ArrayList<Object> mStreets;
 
 
     // Provide a reference to the views for each data item
@@ -34,7 +35,7 @@ public class StreetListRecyclerViewAdapter extends RecyclerView.Adapter<StreetLi
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    StreetListRecyclerViewAdapter(ArrayList<Street> streets) {
+    StreetListRecyclerViewAdapter(ArrayList<Object> streets) {
         mStreets = streets;
     }
 
@@ -52,20 +53,37 @@ public class StreetListRecyclerViewAdapter extends RecyclerView.Adapter<StreetLi
     public void onBindViewHolder(@NonNull StreetListRecyclerViewAdapter.MyViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.street.setText(mStreets.get(position).getStreetName());
-        holder.mView.setOnClickListener(v -> {
-            if (getItemCount() > 2){ // 2 = number of RPis
-                ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
-                        .replace(R.id.main_frame, StreetDetailsFragment.newInstance(mStreets.get(position)))
-                        .commit();
-            } else {
-                ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
-                        .replace(R.id.main_frame, RealTimeStreetDetailsFragment.newInstance(mStreets.get(position)))
-                        .commit();
-            }
-        });
+        if (mStreets.get(position) instanceof Street) {
+            holder.street.setText(((Street) mStreets.get(position)).getStreetName());
+            holder.mView.setOnClickListener(v -> {
+                if (getItemCount() > 2) { // 2 = number of RPis
+                    ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                            .replace(R.id.main_frame, StreetDetailsFragment.newInstance((Street) mStreets.get(position)))
+                            .commit();
+                } else {
+                    ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                            .replace(R.id.main_frame, RealTimeStreetDetailsFragment.newInstance((Street) mStreets.get(position)))
+                            .commit();
+                }
+            });
+        } else {
+            holder.street.setText(((ParkingLot) mStreets.get(position)).getName());
+            holder.mView.setOnClickListener(v -> {
+                if (getItemCount() > 2) { // 2 = number of RPis
+                    ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                            .replace(R.id.main_frame, LotDetails.newInstance((ParkingLot) mStreets.get(position)))
+                            .commit();
+                } else {
+                    ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                            .replace(R.id.main_frame, LotDetails.newInstance((ParkingLot) mStreets.get(position)))
+                            .commit();
+                }
+            });
+        }
 
     }
 

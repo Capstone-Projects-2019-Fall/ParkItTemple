@@ -53,24 +53,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView;
 
 
-    //Temporary map for testing
-    public static TempleMap templeMap;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activlty_main);
         FirebaseApp.initializeApp(this);
 
-        //Delete this after testing with temporary map
-        Thread t = new Thread() {
-            @Override
-            public void run() {
-                templeMap = new TempleMap();
-            }
-        };
-        t.start();
 
         Toolbar toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);

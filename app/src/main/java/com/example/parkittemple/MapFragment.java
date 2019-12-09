@@ -26,6 +26,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.parkittemple.database.Calculation;
 import com.example.parkittemple.database.ParkingLot;
 import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
@@ -57,6 +58,8 @@ import java.util.Objects;
 public class MapFragment extends Fragment {
 
     static final int MY_PERMISSIONS_LOCATION = 1;
+    private static final String PID1 = "pi-1";
+    private static final String PID2 = "pi-2";
     private onMapInteraction parent;
     private static final String DISCLAIMER = "disclaimer";
     private static final double NE_LAT = 39.975498;
@@ -82,8 +85,8 @@ public class MapFragment extends Fragment {
     static final String FREE = "free";
     private static final String TEMPLE_MAP = "temple_map";
     private GoogleMap mMap;
-    private TempleMap tm;
-    private ArrayList<ParkingLot> lots;
+    private static TempleMap tm;
+    private static ArrayList<ParkingLot> lots;
     private Handler handler;
     private RelativeLayout back_dim_layout;
 
@@ -258,6 +261,9 @@ public class MapFragment extends Fragment {
                     Log.d(TAG, "onCreate: TempleMap size = " + tm.getStreets().size());
 
                     for (int i = 0; i < lots.size(); i++){
+                        if (lots.get(i).getName().equals("Norris Street Lot")){
+                            lots.get(i).setPiID(PID2);
+                        }
                         Polygon parkingLot = mMap.addPolygon(new PolygonOptions()
                                 .add(lots.get(i).getPoints().get(0),     //top right
                                         lots.get(i).getPoints().get(1),  //top left
@@ -273,6 +279,9 @@ public class MapFragment extends Fragment {
                     for (int i = 0; i < tm.getStreets().size(); i++) {
 
                         if (!tm.getStreets().get(i).getStreetName().equals("demostreet") || !tm.getStreets().get(i).getStreetName().equals("TEST")){
+                            if (tm.getStreets().get(i).getStreetName().equals("13th Polett to Norris")){
+                                tm.getStreets().get(i).setPiID(PID1);
+                            }
                             Polyline polyline = mMap.addPolyline(new PolylineOptions()
                                     .clickable(true)
                                     .width(20));
@@ -439,6 +448,60 @@ public class MapFragment extends Fragment {
         // Using location, the PopupWindow will be displayed right under anchorView
         popupWindow.showAtLocation(anchorView.getRootView(), Gravity.CENTER, 0, 0);
 
+    }
+
+    public void setTotalSpots(String piID, long totalSpots) {
+
+        for (Street s : tm.getStreets()) {
+
+            if (s.getPiID().equals(piID)) {
+
+                if (s.getCalculation() == null) {
+                    Calculation c = new Calculation();
+                    c.setTotalSpots(totalSpots);
+                    s.setCalculation(c);
+                } else {
+                    s.getCalculation().setTotalSpots(totalSpots);
+                }
+            }
+        }
+    }
+
+    public static TempleMap getTempleMap(){
+        return tm;
+    }
+    public static ArrayList<ParkingLot> getLots(){
+        return lots;
+    }
+
+    public void resetPiOne() {
+
+        for (Street s : tm.getStreets()) {
+
+            if (s.getPiID().equals("pi-1")) {
+                s.setPiID("null");
+            }
+        }
+    }
+
+    public void resetPiTwo() {
+
+        for (Street s : tm.getStreets()) {
+
+            if (s.getPiID().equals("pi-2")) {
+                s.setPiID("null");
+            }
+        }
+    }
+
+    public void setPi(String piID, String streetName) {
+
+        for (Street s : tm.getStreets()) {
+
+            if (s.getStreetName().equals(streetName)) {
+                s.setPiID(piID);
+            }
+        }
     }
 
     public interface onMapInteraction{

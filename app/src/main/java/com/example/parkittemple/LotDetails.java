@@ -36,8 +36,9 @@ public class LotDetails extends Fragment {
     private static final String LOT_DAYS = "lot_days";
     private static final String LOT_HOURS = "lot_hours";
     private static final String LOT_COST = "lot_cost";
+    private static final String PI = "pi";
 
-    private String lotName, lotDays, lotHours, lotCost;
+    private String lotName, lotDays, lotHours, lotCost, PiID;
     private int total_spots, available_spots;
     private ArrayList<LatLng> points;
     private double lat, lng;
@@ -55,6 +56,7 @@ public class LotDetails extends Fragment {
         args.putString(LOT_DAYS, lot.getDaysOpen());
         args.putString(LOT_HOURS, lot.getHours());
         args.putString(LOT_COST, lot.getCosts());
+        args.putString(PI, lot.getPiID());
         args.putParcelableArrayList(POINTS, (ArrayList<? extends Parcelable>) lot.getPoints());
         fragment.setArguments(args);
         return fragment;
@@ -73,6 +75,7 @@ public class LotDetails extends Fragment {
             lotHours = bundle.getString(LOT_HOURS);
             lotCost= bundle.getString(LOT_COST);
             points = bundle.getParcelableArrayList(POINTS);
+            PiID = bundle.getString(PI);
         }
 
     }
@@ -102,6 +105,11 @@ public class LotDetails extends Fragment {
         LatLng center = centerPoint(points);
         lat = center.latitude;
         lng = center.longitude;
+
+        if (PiID == null){
+            view.findViewById(R.id.avail_spots).setVisibility(View.GONE);
+            view.findViewById(R.id.num_spots).setVisibility(View.GONE);
+        }
 
         // Inflate the layout for this fragment
         return view;

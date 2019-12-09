@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ParkingLot {
 
-    private String name, daysOpen, hours, costs, address;
+    private String name, daysOpen, hours, costs, address, PiID;
     private ArrayList<com.google.android.gms.maps.model.LatLng> points;
 
     public ParkingLot(String name, String daysOpen, String hours, String costs, String address, ArrayList<com.google.android.gms.maps.model.LatLng> points) {
@@ -32,6 +32,13 @@ public class ParkingLot {
         this.name = name;
     }
 
+    public void setPiID(String id){
+        this.PiID = id;
+    }
+
+    public String getPiID(){
+        return PiID;
+    }
 
     public String getDaysOpen() {
         return daysOpen;

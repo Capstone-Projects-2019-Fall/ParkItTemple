@@ -28,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.parkittemple.database.Calculation;
@@ -36,7 +37,9 @@ import com.example.parkittemple.database.TempleMap;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -221,6 +224,8 @@ public class RealTimeStreetDetailsFragment extends Fragment {
             available_spots.setText("--");
             isVisible = true;
 
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
             Thread t = new Thread() {
                 @Override
                 public void run() {
@@ -228,9 +233,40 @@ public class RealTimeStreetDetailsFragment extends Fragment {
                         try {
                             sleep(3000);
 
-                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            db.collection("pi")
+                                    //.whereArrayContains("pi", "pi")
+                                    //.whereEqualTo("state", "CA")
+                                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                        @Override
+                                        public void onEvent(@Nullable QuerySnapshot snapshots,
+                                                            @Nullable FirebaseFirestoreException e) {
+                                            if (e != null) {
+                                                Log.w(TAG, "listen:error", e);
+                                                return;
+                                            }
 
-                            Task<QuerySnapshot> task = db.collection("pi").get();
+                                            for (QueryDocumentSnapshot doc : snapshots) {
+
+                                                if (doc.get("available_spots") != null) {
+                                                    String piID = doc.getId();
+                                                    long takenSpots;
+                                                    try{
+                                                        takenSpots = (long) doc.get("available_spots");
+                                                    } catch (ClassCastException class_e){
+                                                        takenSpots = 0;
+                                                    }
+
+                                                    Log.d(TAG, "PiID: " + piID);
+                                                    Log.d(TAG, "Taken Spots: " + takenSpots);
+
+                                                    handler.sendEmptyMessage(Math.toIntExact(takenSpots));
+                                                }
+                                            }
+                                        }
+                                    });
+
+
+                            /*Task<QuerySnapshot> task = db.collection("pi").get();
 
                             try {
                                 QuerySnapshot documents = Tasks.await(task);
@@ -242,6 +278,8 @@ public class RealTimeStreetDetailsFragment extends Fragment {
                             } catch (ExecutionException | InterruptedException e) {
                                 Log.d(TAG, "get failed with ", e);
                             }
+
+                             */
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
