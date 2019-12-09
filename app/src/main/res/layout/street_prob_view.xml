@@ -29,7 +29,7 @@
         android:gravity="center"
         android:text="@string/prob_perc"
         android:textColor="@android:color/black"
-        android:textSize="26sp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/hours_spinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/hours_spinner"

@@ -4,22 +4,29 @@ package com.example.parkittemple;
 import android.Manifest;
 import android.animation.LayoutTransition;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.parkittemple.database.ParkingLot;
 import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,6 +45,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,6 +58,7 @@ public class MapFragment extends Fragment {
 
     static final int MY_PERMISSIONS_LOCATION = 1;
     private onMapInteraction parent;
+    private static final String DISCLAIMER = "disclaimer";
     private static final double NE_LAT = 39.975498;
     private static final double NE_LNG = -75.166811;
     private static final double SW_LAT = 39.988104;
@@ -61,7 +71,7 @@ public class MapFragment extends Fragment {
     private static final double TEMPLE_11_DIAMOND_LNG = -75.151277;
     private LatLng templeMapCenter = new LatLng(39.980548, -75.155258);
     private GroundOverlayOptions templeMapOverlay;
-    private boolean cleared, showPolylines;
+    private boolean cleared, showPolylines, showDisclaimer;
     private float currZoom;
     private LatLng currLatLng;
     private static final float MIN_ZOOM = 15.0f;
@@ -73,46 +83,54 @@ public class MapFragment extends Fragment {
     private static final String TEMPLE_MAP = "temple_map";
     private GoogleMap mMap;
     private TempleMap tm;
+    private ArrayList<ParkingLot> lots;
     private Handler handler;
+    private RelativeLayout back_dim_layout;
 
     public MapFragment() {
         // Required empty public constructor
     }
 
-    /*public static MapFragment newInstance(TempleMap templeMap) {
-        MapFragment fragment = new MapFragment();
-        Bundle args = new Bundle();
-        args.putSerializable(TEMPLE_MAP, templeMap);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-     */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        showDisclaimer = prefs.getBoolean(DISCLAIMER,false);
+
         Thread t = new Thread() {
             @Override
             public void run() {
                 tm = new TempleMap();
+                lots = new ArrayList<>();
+                String[] lot_names = getResources().getStringArray(R.array.parking_lots);
+                String[] lot_days = getResources().getStringArray(R.array.parking_lots_days);
+                String[] lot_hours = getResources().getStringArray(R.array.parking_lots_hours);
+                String[] lot_costs = getResources().getStringArray(R.array.parking_lots_costs);
+                String[] lot_address = getResources().getStringArray(R.array.parking_lots_addresses);
+                String[] lot_points = getResources().getStringArray(R.array.parking_lots_points);
+
+                for (int i = 0; i < lot_names.length - 1; i++){
+                    lots.add(new ParkingLot(lot_names[i], lot_days[i], lot_hours[i], lot_costs[i], lot_address[i], toLatLngList(lot_points[i])));
+                }
                 handler.sendEmptyMessage(1);
+            }
+
+            private ArrayList<LatLng> toLatLngList(String lot_point) {
+                Log.d(TAG, "toLatLngList: lot_point : " + lot_point);
+                String[] points = lot_point.split(",");
+                Log.d(TAG, "toLatLngList: points : " + points);
+                ArrayList<LatLng> geoPoints = new ArrayList<>();
+                geoPoints.add(new LatLng(Double.valueOf(points[0]),Double.valueOf(points[1])));
+                geoPoints.add(new LatLng(Double.valueOf(points[2]),Double.valueOf(points[3])));
+                geoPoints.add(new LatLng(Double.valueOf(points[4]),Double.valueOf(points[5])));
+                geoPoints.add(new LatLng(Double.valueOf(points[6]),Double.valueOf(points[7])));
+
+                return geoPoints;
             }
         };
         t.start();
-
-        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Request the permission
-            ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()),
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_LOCATION);
-        }
-
-
 
     }
 
@@ -199,10 +217,13 @@ public class MapFragment extends Fragment {
             });
             mMap.setOnInfoWindowClickListener(marker -> {
                 if (marker.getTag() instanceof Street) {
-                    parent.onStreetClick((Street) marker.getTag());
+                    if (!showDisclaimer){
+                        showDisclaimer(getView());
+                    } else
+                        parent.onStreetClick((Street) marker.getTag());
                 }
                 else
-                    Toast.makeText(getContext(),"Lot clicked", Toast.LENGTH_SHORT).show();
+                    parent.onLotClick((ParkingLot) marker.getTag());
             });
             //Remove marker from map
             mMap.setOnInfoWindowCloseListener(Marker::remove);
@@ -220,23 +241,15 @@ public class MapFragment extends Fragment {
             });
             mMap.setOnPolygonClickListener(polygonX -> {
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(centerPoint(polygonX.getPoints())));
-                //TODO ParkingLot lot = (ParkingLot) polygonX.getTag();
+                ParkingLot lot = (ParkingLot) polygonX.getTag();
                 //Add marker with info window
-                /*
-
                 assert lot != null;
                 Marker testMarker = mMap.addMarker(new MarkerOptions()
                         .position(centerPoint(polygonX.getPoints()))
-                        .title(lot.getLotName()));
+                        .title(lot.getName()));
                 testMarker.setTag(lot);
                 testMarker.showInfoWindow();
 
-                 */
-                Marker testMarker = mMap.addMarker(new MarkerOptions()
-                        .position(centerPoint(polygonX.getPoints()))
-                        .title("SERC Parking Lot 7"));
-                testMarker.setTag("SERC Parking Lot 7");
-                testMarker.showInfoWindow();
 
             });
 
@@ -244,22 +257,22 @@ public class MapFragment extends Fragment {
                 if (msg.what== 1) {
                     Log.d(TAG, "onCreate: TempleMap size = " + tm.getStreets().size());
 
+                    for (int i = 0; i < lots.size(); i++){
+                        Polygon parkingLot = mMap.addPolygon(new PolygonOptions()
+                                .add(lots.get(i).getPoints().get(0),     //top right
+                                        lots.get(i).getPoints().get(1),  //top left
+                                        lots.get(i).getPoints().get(2),  //bottom left
+                                        lots.get(i).getPoints().get(3))  //bottom right
+                                .fillColor(getResources().getColor(R.color.blue_semi_trans))
+                                .clickable(true)
+                                .strokeWidth(1f));
+                        parkingLot.setTag(lots.get(i));
+
+                    }
+
                     for (int i = 0; i < tm.getStreets().size(); i++) {
 
-                        if (tm.getStreets().get(i).getStreetName().equals("demostreet")){
-                            PolygonOptions SERCParkingLot = new PolygonOptions()
-                                    .add(new LatLng(39.982490, -75.151671),     //top right
-                                            new LatLng(39.982564, -75.152224),  //top left
-                                            new LatLng(39.981800, -75.152412),  //bottom left
-                                            new LatLng(39.981714, -75.151841))  //bottom right
-                                    .fillColor(getResources().getColor(R.color.blue_semi_trans))
-                                    .clickable(true)
-                                    .strokeWidth(1f);
-
-                            mMap.addPolygon(SERCParkingLot);
-
-                        } else {
-
+                        if (!tm.getStreets().get(i).getStreetName().equals("demostreet") || !tm.getStreets().get(i).getStreetName().equals("TEST")){
                             Polyline polyline = mMap.addPolyline(new PolylineOptions()
                                     .clickable(true)
                                     .width(20));
@@ -290,6 +303,21 @@ public class MapFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (ContextCompat.checkSelfPermission(Objects.requireNonNull(getContext()),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Request the permission
+            ActivityCompat.requestPermissions(Objects.requireNonNull(getActivity()),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_LOCATION);
+        }
     }
 
     @Override
@@ -307,23 +335,21 @@ public class MapFragment extends Fragment {
         return list;
     }
 
-    //TODO Update parameter to be a Street object
     private int setPolylineColor(Object polyTag) {
-        /**
-         * polytag = Street object;
-         *
-         * double prob = polyTag.getProb();
-         *
-         * switch (prob)
-         *      75 - 100: Green
-         *      50 -74: Yellow
-         *      25 - 49: Orange
-         *      0 - 24: Red
-         *
-         * return color
-         */
+        Date curr = Calendar.getInstance().getTime();
+        int pos = Integer.parseInt(curr.toString().substring(11,13));
+        String prob = getResources().getStringArray(R.array.probs)[pos];
+        switch (prob) {
+            case "Very Likely":
+                return ContextCompat.getColor(getContext(), R.color.street_green);
+            case "Likely":
+                return ContextCompat.getColor(getContext(), R.color.street_yellow);
+            case "Not Likely":
+                return ContextCompat.getColor(getContext(), R.color.street_orange);
+            default:
+                return ContextCompat.getColor(getContext(), R.color.street_red);
+        }
 
-        return Color.BLACK;
     }
 
     private LatLng midPoint(List<LatLng> geopoints){
@@ -380,8 +406,44 @@ public class MapFragment extends Fragment {
         return new LatLng(Math.toDegrees(lat3), Math.toDegrees(lng3));
     }
 
+    private void showDisclaimer(View anchorView) {
+
+        View view = getLayoutInflater().inflate(R.layout.popup_disclaimer,null);
+        back_dim_layout = (RelativeLayout) anchorView.getRootView().findViewById(R.id.bac_dim_layout);
+
+        final PopupWindow popupWindow = new PopupWindow(view,
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        // Set an elevation value for popup window
+        // Call requires API level 21
+        popupWindow.setElevation(6.0f);
+
+
+        view.findViewById(R.id.disc_accept).setOnClickListener(v -> {
+            popupWindow.dismiss();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            SharedPreferences.Editor edit = prefs.edit();
+            edit.putBoolean(DISCLAIMER, true);
+            edit.commit();
+            showDisclaimer = true;
+
+        });
+
+
+        // If the PopupWindow should be focusable
+        popupWindow.setFocusable(true);
+        back_dim_layout.setVisibility(View.VISIBLE);
+        popupWindow.setOnDismissListener(() -> back_dim_layout.setVisibility(View.GONE));
+
+
+        // Using location, the PopupWindow will be displayed right under anchorView
+        popupWindow.showAtLocation(anchorView.getRootView(), Gravity.CENTER, 0, 0);
+
+    }
+
     public interface onMapInteraction{
         void onStreetClick(Street street);
+        void onLotClick(ParkingLot lot);
         void onLocationEnabled();
     }
 

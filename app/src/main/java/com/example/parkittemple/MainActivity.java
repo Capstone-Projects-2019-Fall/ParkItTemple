@@ -1,11 +1,23 @@
 package com.example.parkittemple;
 
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Process;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -15,10 +27,14 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
+import com.example.parkittemple.database.ParkingLot;
 import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.FirebaseApp;
+
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.annotation.Nullable;
 
@@ -46,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activlty_main);
         FirebaseApp.initializeApp(this);
-
 
         //Delete this after testing with temporary map
         Thread t = new Thread() {
@@ -205,6 +220,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public void onLotClick(ParkingLot lot) {
+        getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(R.anim.fade_in_long,R.anim.fade_out)
+                .replace(R.id.main_frame, LotDetails.newInstance(lot))
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
     public void onLocationEnabled() {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_frame, new MapFragment(), MAP_FRAGMENT)
@@ -231,4 +255,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
     }
+
+
 }

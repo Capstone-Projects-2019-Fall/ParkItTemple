@@ -56,31 +56,109 @@
         <item>11 PM</item>
     </string-array>
 
+    <string-array name="parking_lots">
+        <item>15th Street Parking Lot</item>
+        <item>Bell Garage</item>
+        <item>Cecil B. Moore Lot</item>
+        <item>Diamond Street Lot</item>
+        <item>Liacourse Garage</item>
+        <item>Montgomery Garage</item>
+        <item>Norris Street Lot</item>
+        <item>Temple Towers Lot</item>
+        <item>Tuttleman Lot</item>
+        <item>Tyler Lot</item>
+    </string-array>
+
+    <string-array name="parking_lots_days">
+        <item>Mon-Fri</item>
+        <item>Mon-Fri</item>
+        <item>24/7</item>
+        <item>Mon-Fri</item>
+        <item>Mon-Sun</item>
+        <item>Mon-Fri</item>
+        <item>Mon-Fri</item>
+        <item>24/7</item>
+        <item>24/7</item>
+        <item>24/7</item>
+    </string-array>
+
+    <string-array name="parking_lots_hours">
+        <item>7am - 10:45pm</item>
+        <item>5:30am - 9:30pm</item>
+        <item>12am - 12am</item>
+        <item>7am - 10:45pm</item>
+        <item>5:30am - 2 am</item>
+        <item>5:30am - 9:30pm</item>
+        <item>7am - 10:30pm</item>
+        <item>12am - 12am</item>
+        <item>12am - 12am</item>
+        <item>12am - 12am</item>
+    </string-array>
+
+    <string-array name="parking_lots_costs">
+        <item>$20/day</item>
+        <item>$4/hr</item>
+        <item>$2/half hour,  $4/hour,  $20/day</item>
+        <item>$20/day</item>
+        <item>$20/day</item>
+        <item>$4/hour</item>
+        <item>$20/day</item>
+        <item>Permit only</item>
+        <item>$6/hour</item>
+        <item>Permit only</item>
+    </string-array>
+
+    <string-array name="parking_lots_addresses">
+        <item>1855 N. 15th St</item>
+        <item>1840 N. 11th St</item>
+        <item>1223 Cecil B. Moore Ave</item>
+        <item>1140 W. Diamond St</item>
+        <item>1710 N 15th St</item>
+        <item>1859 N. 11th St</item>
+        <item>1961 N Marvine St</item>
+        <item>1651 N. 13th St</item>
+        <item>1205 W. Montgomery Ave</item>
+        <item>1220 W. Diamond St</item>
+    </string-array>
+
+    <string-array name="parking_lots_points" >
+        <item>39.9816988,-75.1572655,39.981900,-75.158863,39.9814202,-75.1589862,39.9812003,-75.1573891</item>
+        <item>39.9801820,-75.1521964,39.9802334,-75.1526282,39.9796867,-75.1527462,39.9796266,-75.1523057</item>
+        <item>39.9786475,-75.1541039,39.9787417,-75.1549824,39.9783317,-75.1551031,39.9782042,-75.1542019</item>
+        <item>39.9840645,-75.1520876,39.9841528,-75.1527950,39.9827409,-75.1531116,39.9826525,-75.1524081</item>
+        <item>39.9804092,-75.1592558,39.9805037,-75.1599532,39.9793034,-75.1602188,39.9792294,-75.1595884</item>
+        <item>39.9809001,-75.1511610,39.9809920,-75.1518589,39.9795543,-75.1521587,39.9794753,-75.1514994</item>
+        <item>39.982490,-75.151671,39.982564,-75.152224,39.981800,-75.152412,39.981714,-75.151841</item>
+        <item>39.9775935,-75.1543749,39.9777661,-75.1557938,39.9773393,-75.1558897,39.9771244,-75.1544762</item>
+        <item>39.9801110,-75.1537736,39.9802353,-75.1546493,39.9798736,-75.1547358,39.9797585,-75.1538319</item>
+        <item>39.9842881,-75.1538676,39.9843579,-75.1543826,39.9838939,-75.1545001,39.9838366,-75.1539920</item>
+    </string-array>
+
     <string-array name="probs">
-        <item>56.1%</item>
-        <item>25.4%</item>
-        <item>68.4%</item>
-        <item>35.9%</item>
-        <item>75.0%</item>
-        <item>67.1%</item>
-        <item>85.4%</item>
-        <item>98.2%</item>
-        <item>35.5%</item>
-        <item>44.6%</item>
-        <item>29.2%</item>
-        <item>60.2%</item>
-        <item>58.4%</item>
-        <item>50.0%</item>
-        <item>73.6%</item>
-        <item>22.4%</item>
-        <item>46.1%</item>
-        <item>13.9%</item>
-        <item>49.9%</item>
-        <item>88.4%</item>
-        <item>99.9%</item>
-        <item>66.6%</item>
-        <item>33.3%</item>
-        <item>30.0%</item>
+        <item>Very Likely</item>
+        <item>Very Likely</item>
+        <item>Very Likely</item>
+        <item>Very Likely</item>
+        <item>Very Likely</item>
+        <item>Very Likely</item>
+        <item>Likely</item>
+        <item>Likely</item>
+        <item>Not A Chance</item>
+        <item>Not A Chance</item>
+        <item>Not A Chance</item>
+        <item>Not A Chance</item>
+        <item>Not A Chance</item>
+        <item>Not A Chance</item>
+        <item>Not A Chance</item>
+        <item>Not A Chance</item>
+        <item>Likely</item>
+        <item>Likely</item>
+        <item>Likely</item>
+        <item>Likely</item>
+        <item>Likely</item>
+        <item>Very Likely</item>
+        <item>Very Likely</item>
+        <item>Very Likely</item>
     </string-array>
 
     <string-array name="notify">
@@ -98,15 +176,21 @@
     <string name="today_s_date">Today\'s date</string>
     <string name="time_parked">Time</string>
     <string name="notify">Notify</string>
-    <string name="out_of_bounds">Hmmm... I don\'t know what you\'re looking for, but if you need to go back to campus just give me a tap!</string>
+    <string name="out_of_bounds">Hmmm… I don\'t know what you\'re looking for, but if you need to go back to campus just give me a tap!</string>
     <string name="directions">Directions</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="available_spots">Available Spots</string>
     <string name="map">Map</string>
     <string name="configure_rpi">Configure RPi</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
     <string name="number_of_spots">Number of Spots</string>
+    <string name="disclaimer">Park It Temple is an application that is supposed to assist Temple commuters in finding a parking space; it does not find spaces for them. The likelihoods of finding parking are estimated, not exact. Data collected for Saturday and Sunday was not used for this app because there are no consistent parking patterns for the weekends. Therefore, the historical data for the weekday is used for the weekend.</string>
+    <string name="accept">Accept</string>
+    <string name="disclaimer_2">Disclaimer:</string>
+    <string name="cost">Cost</string>
+    <string name="location">Location</string>
+    <string name="serc_shro">SHRO/SERC</string>
+    <string name="_110">110</string>
+    <string name="norris_street_lot">Norris Street Lot</string>
+    <string name="_10">10</string>
 </resources>

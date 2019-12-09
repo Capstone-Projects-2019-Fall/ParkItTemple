@@ -18,4 +18,9 @@
         <item name="android:listPreferredItemPaddingEnd">8dp</item>
     </style>
 
+    <style name="FadeAnimation">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+
 </resources>

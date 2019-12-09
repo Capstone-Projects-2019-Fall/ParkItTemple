@@ -57,10 +57,6 @@ public class RealTimeStreetDetailsFragment extends Fragment {
     private static final String LAT = "lat";
     private static final String LNG = "lng";
 
-    //TODO
-    /** Load these from the database
-     *These are the items that need to be displayed to the user.
-     *This is a very basic setup for testing purposes. */
     private String[] mDays; //An array of days of the week. Can leave as is or load from db
     private String[] mProbs; //An array of probabilities for parking on it's index's respective hour.
     private String[] mHours;
@@ -71,6 +67,7 @@ public class RealTimeStreetDetailsFragment extends Fragment {
     private TextView prob, available_spots;
     private RelativeLayout back_dim_layout;
     boolean isVisible;
+    private int mPosition;
 
 
     public RealTimeStreetDetailsFragment() {
@@ -150,10 +147,8 @@ public class RealTimeStreetDetailsFragment extends Fragment {
         hours.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                //TODO change prob based on hour here. Currently choosing prob at random
-                int random = (int) (Math.random() * 100) % mProbs.length;
-                prob.setText(mProbs[random]);
+                prob.setText(mProbs[position]);
+                mPosition = position;
 
             }
 
@@ -169,10 +164,7 @@ public class RealTimeStreetDetailsFragment extends Fragment {
         days.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //TODO change dataset based on day
-                int random = (int) (Math.random() * 100) % mProbs.length;
-                prob.setText(mProbs[random]);
-
+                prob.setText(mProbs[mPosition]);
             }
 
             @Override
@@ -182,23 +174,29 @@ public class RealTimeStreetDetailsFragment extends Fragment {
         });
 
 
-        SpannableString ss = new SpannableString(getString(R.string.alert_text));
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(View textView) {
-                showPopup(view);
-            }
-            @Override
-            public void updateDrawState(TextPaint ds) {
-                super.updateDrawState(ds);
-                ds.setUnderlineText(true);
-            }
-        };
-        ss.setSpan(clickableSpan, getString(R.string.alert_text).length()- 8, getString(R.string.alert_text).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ss.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.link_blue)), getString(R.string.alert_text).length()- 8, getString(R.string.alert_text).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         TextView alert_text = view.findViewById(R.id.alert_text_view);
-        alert_text.setText(ss);
-        alert_text.setMovementMethod(LinkMovementMethod.getInstance());
+        if (!description.equals("No regulation.")) {
+            SpannableString ss = new SpannableString(getString(R.string.alert_text));
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(View textView) {
+                    showPopup(view);
+                }
+
+                @Override
+                public void updateDrawState(TextPaint ds) {
+                    super.updateDrawState(ds);
+                    ds.setUnderlineText(true);
+                }
+            };
+            ss.setSpan(clickableSpan, getString(R.string.alert_text).length() - 8, getString(R.string.alert_text).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ss.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.link_blue)), getString(R.string.alert_text).length() - 8, getString(R.string.alert_text).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            alert_text = view.findViewById(R.id.alert_text_view);
+            alert_text.setText(ss);
+            alert_text.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            alert_text.setVisibility(View.INVISIBLE);
+        }
 
 
         // Inflate the layout for this fragment

@@ -2,45 +2,27 @@ package com.example.parkittemple;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.parkittemple.database.Street;
-import com.google.type.LatLng;
+import com.example.parkittemple.database.ParkingLot;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-
-import static com.example.parkittemple.MapFragment.DESCRIPTION;
-import static com.example.parkittemple.MapFragment.FREE;
-import static com.example.parkittemple.MapFragment.STREET_NAME;
-import static com.example.parkittemple.MapFragment.geoToLatLng;
 
 
 /**
@@ -50,10 +32,15 @@ public class LotDetails extends Fragment {
     private static final String LAT = "lat";
     private static final String LNG = "lng";
     private static final String POINTS = "points";
+    private static final String LOT_NAME = "lot_name";
+    private static final String LOT_DAYS = "lot_days";
+    private static final String LOT_HOURS = "lot_hours";
+    private static final String LOT_COST = "lot_cost";
 
-    private String streetName;
+    private String lotName, lotDays, lotHours, lotCost;
     private int total_spots, available_spots;
-    private Parcelable[] points;
+    private ArrayList<LatLng> points;
+    private double lat, lng;
     private RelativeLayout back_dim_layout;
 
 
@@ -61,11 +48,14 @@ public class LotDetails extends Fragment {
         // Required empty public constructor
     }
 
-    static LotDetails newInstance(Street street) {
+    static LotDetails newInstance(ParkingLot lot) {
         LotDetails fragment = new LotDetails();
         Bundle args = new Bundle();
-        args.putString(STREET_NAME, street.getStreetName());
-        args.putParcelableArrayList(POINTS, (ArrayList<? extends Parcelable>) geoToLatLng(street.getGeoPoints()));
+        args.putString(LOT_NAME, lot.getName());
+        args.putString(LOT_DAYS, lot.getDaysOpen());
+        args.putString(LOT_HOURS, lot.getHours());
+        args.putString(LOT_COST, lot.getCosts());
+        args.putParcelableArrayList(POINTS, (ArrayList<? extends Parcelable>) lot.getPoints());
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,8 +68,11 @@ public class LotDetails extends Fragment {
         Bundle bundle = getArguments();
         assert bundle != null;
         {
-            streetName = bundle.getString(STREET_NAME);
-            points = bundle.getParcelableArray(POINTS);
+            lotName = bundle.getString(LOT_NAME);
+            lotDays = bundle.getString(LOT_DAYS);
+            lotHours = bundle.getString(LOT_HOURS);
+            lotCost= bundle.getString(LOT_COST);
+            points = bundle.getParcelableArrayList(POINTS);
         }
 
     }
@@ -90,8 +83,25 @@ public class LotDetails extends Fragment {
         setHasOptionsMenu(true);
 
         View view = inflater.inflate(R.layout.fragment_lot_details, container, false);
+        view.setBackgroundColor(Color.WHITE);
 
+        TextView name, days, hours, cost;
 
+        name = view.findViewById(R.id.lot_name);
+        name.setText(lotName);
+
+        days = view.findViewById(R.id.lot_days);
+        days.setText(lotDays);
+
+        hours = view.findViewById(R.id.lot_hours);
+        hours.setText(lotHours);
+
+        cost = view.findViewById(R.id.lot_cost);
+        cost.setText(lotCost);
+
+        LatLng center = centerPoint(points);
+        lat = center.latitude;
+        lng = center.longitude;
 
         // Inflate the layout for this fragment
         return view;
@@ -107,18 +117,43 @@ public class LotDetails extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         // Create a Uri from an intent string. Use the result to create an Intent.
-        //Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
+        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + lat + "," + lng);
 
         // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
-        //Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
 
         // Make the Intent explicit by setting the Google Maps package
-       //mapIntent.setPackage("com.google.android.apps.maps");
+        mapIntent.setPackage("com.google.android.apps.maps");
 
         // Attempt to start an activity that can handle the Intent
-       //startActivity(mapIntent);
+        startActivity(mapIntent);
 
         return true;
+    }
+
+    private LatLng centerPoint(List<LatLng> geopoints){
+
+        //Find midpoint of diagonal
+        double lat1 = geopoints.get(0).latitude;
+        double lat2 = geopoints.get(2).latitude;
+        double lng1 = geopoints.get(0).longitude;
+        double lng2 = geopoints.get(2).longitude;
+
+
+        double dLng = Math.toRadians(lng2 - lng1);
+
+        //convert to radians
+        lat1 = Math.toRadians(lat1);
+        lat2 = Math.toRadians(lat2);
+        lng1 = Math.toRadians(lng1);
+
+        double Bx = Math.cos(lat2) * Math.cos(dLng);
+        double By = Math.cos(lat2) * Math.sin(dLng);
+        double lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By));
+        double lng3 = lng1 + Math.atan2(By, Math.cos(lat1) + Bx);
+
+        //return out in degrees
+        return new LatLng(Math.toDegrees(lat3), Math.toDegrees(lng3));
     }
 
 }

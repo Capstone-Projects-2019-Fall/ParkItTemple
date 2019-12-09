@@ -7,4 +7,8 @@
     <color name="drk_green">#13491E</color>
     <color name="blue_semi_trans">#6100B7FF</color>
     <color name="link_blue">#2376D8</color>
+    <color name="street_red">#BCD30000</color>
+    <color name="street_orange">#BCD33C00</color>
+    <color name="street_yellow">#BCCCD300</color>
+    <color name="street_green">#BC20D300</color>
 </resources>

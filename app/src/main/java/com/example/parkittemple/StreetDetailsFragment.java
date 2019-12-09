@@ -44,11 +44,6 @@ import static com.example.parkittemple.MapFragment.STREET_NAME;
 public class StreetDetailsFragment extends Fragment {
     private static final String LAT = "lat";
     private static final String LNG = "lng";
-
-    //TODO
-    /** Load these from the database
-    *These are the items that need to be displayed to the user.
-    *This is a very basic setup for testing purposes. */
     private String[] mDays; //An array of days of the week. Can leave as is or load from db
     private String[] mProbs; //An array of probabilities for parking on it's index's respective hour.
     private String[] mHours;
@@ -58,6 +53,7 @@ public class StreetDetailsFragment extends Fragment {
     private boolean isFree;
     private TextView prob;
     private RelativeLayout back_dim_layout;
+    private int mPosition;
 
 
     public StreetDetailsFragment() {
@@ -100,6 +96,7 @@ public class StreetDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         setHasOptionsMenu(true);
+        Date curr = Calendar.getInstance().getTime();
 
         View view = inflater.inflate(R.layout.fragment_street_details, container, false);
 
@@ -138,10 +135,8 @@ public class StreetDetailsFragment extends Fragment {
         hours.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                //TODO change prob based on hour here. Currently choosing prob at random
-                int random = (int) (Math.random() * 100) % mProbs.length;
-                prob.setText(mProbs[random]);
+                prob.setText(mProbs[position]);
+                mPosition = position;
 
             }
 
@@ -150,6 +145,7 @@ public class StreetDetailsFragment extends Fragment {
 
             }
         });
+        hours.setSelection(Integer.parseInt(curr.toString().substring(11,13)));
 
         ArrayAdapter<CharSequence> adapter_days = ArrayAdapter.createFromResource(view.getContext(),R.array.days, android.R.layout.simple_spinner_item);
         adapter_days.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -157,10 +153,7 @@ public class StreetDetailsFragment extends Fragment {
         days.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //TODO change dataset based on day
-                int random = (int) (Math.random() * 100) % mProbs.length;
-                prob.setText(mProbs[random]);
-
+                prob.setText(mProbs[mPosition]);
             }
 
             @Override
@@ -170,23 +163,30 @@ public class StreetDetailsFragment extends Fragment {
         });
 
 
-        SpannableString ss = new SpannableString(getString(R.string.alert_text));
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(View textView) {
-                showPopup(view);
-            }
-            @Override
-            public void updateDrawState(TextPaint ds) {
-                super.updateDrawState(ds);
-                ds.setUnderlineText(true);
-            }
-        };
-        ss.setSpan(clickableSpan, getString(R.string.alert_text).length()- 8, getString(R.string.alert_text).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ss.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.link_blue)), getString(R.string.alert_text).length()- 8, getString(R.string.alert_text).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         TextView alert_text = view.findViewById(R.id.alert_text_view);
-        alert_text.setText(ss);
-        alert_text.setMovementMethod(LinkMovementMethod.getInstance());
+        if (!description.equals("No regulation.")) {
+            SpannableString ss = new SpannableString(getString(R.string.alert_text));
+            ClickableSpan clickableSpan = new ClickableSpan() {
+                @Override
+                public void onClick(View textView) {
+                    showPopup(view);
+                }
+
+                @Override
+                public void updateDrawState(TextPaint ds) {
+                    super.updateDrawState(ds);
+                    ds.setUnderlineText(true);
+                }
+            };
+            ss.setSpan(clickableSpan, getString(R.string.alert_text).length() - 8, getString(R.string.alert_text).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ss.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.link_blue)), getString(R.string.alert_text).length() - 8, getString(R.string.alert_text).length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            alert_text = view.findViewById(R.id.alert_text_view);
+            alert_text.setText(ss);
+            alert_text.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            alert_text.setVisibility(View.INVISIBLE);
+        }
 
 
         // Inflate the layout for this fragment
@@ -278,13 +278,17 @@ public class StreetDetailsFragment extends Fragment {
             anchorView.findViewById(R.id.alert_text_view).setVisibility(View.GONE);
         });
 
+        view.findViewById(R.id.cancel).setOnClickListener(v -> {
+            popupWindow.dismiss();
+        });
+
 
         // If the PopupWindow should be focusable
         popupWindow.setFocusable(true);
         back_dim_layout.setVisibility(View.VISIBLE);
         popupWindow.setOnDismissListener(() -> back_dim_layout.setVisibility(View.GONE));
 
-
+        popupWindow.setAnimationStyle(R.style.FadeAnimation);
         // Using location, the PopupWindow will be displayed right under anchorView
         popupWindow.showAtLocation(anchorView.getRootView(), Gravity.CENTER, 0, 0);
 

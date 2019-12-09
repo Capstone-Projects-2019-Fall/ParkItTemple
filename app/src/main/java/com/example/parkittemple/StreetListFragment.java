@@ -23,6 +23,7 @@ public class StreetListFragment extends Fragment {
 
     private TempleMap templeMap;
     private RecyclerView recyclerView;
+    ArrayList<Street> newMap;
 
 
     public StreetListFragment() {
@@ -33,6 +34,12 @@ public class StreetListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         templeMap = MainActivity.templeMap;
+        newMap = new ArrayList<>();
+        for (Street street : templeMap.getStreets()){
+            if (!street.getStreetName().equals("demostreet") && !street.getStreetName().equals("TEST")){
+                newMap.add(street);
+            }
+        }
     }
 
     @Override
@@ -40,11 +47,11 @@ public class StreetListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_street_list, container, false);
 
-        if (templeMap != null) {
+        if (newMap != null) {
             recyclerView = (RecyclerView) view.findViewById(R.id.recview_street_list);
             recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-            recyclerView.setAdapter(new StreetListRecyclerViewAdapter((ArrayList<Street>) templeMap.getStreets()));
-            Log.d(TAG, "onCreateView: street list view" + templeMap.getStreets().size());
+            recyclerView.setAdapter(new StreetListRecyclerViewAdapter(newMap));
+            Log.d(TAG, "onCreateView: street list view " + newMap.size());
         }
 
         return view;

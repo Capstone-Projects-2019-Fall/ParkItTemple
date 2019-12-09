@@ -54,7 +54,7 @@ public class StreetListRecyclerViewAdapter extends RecyclerView.Adapter<StreetLi
         // - replace the contents of the view with that element
         holder.street.setText(mStreets.get(position).getStreetName());
         holder.mView.setOnClickListener(v -> {
-            if (getItemCount() == MainActivity.templeMap.getStreets().size()){
+            if (getItemCount() > 2){ // 2 = number of RPis
                 ((FragmentActivity) v.getContext()).getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
                         .replace(R.id.main_frame, StreetDetailsFragment.newInstance(mStreets.get(position)))
