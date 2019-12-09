@@ -22,6 +22,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -43,13 +44,22 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -452,6 +462,8 @@ public class MapFragment extends Fragment {
 
     public void setTotalSpots(String piID, long totalSpots) {
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         for (Street s : tm.getStreets()) {
 
             if (s.getPiID().equals(piID)) {
@@ -463,6 +475,27 @@ public class MapFragment extends Fragment {
                 } else {
                     s.getCalculation().setTotalSpots(totalSpots);
                 }
+
+                /*
+                 Database write:
+                 */
+
+                DocumentReference piDoc = db.collection("pi").document(piID);
+
+                piDoc
+                        .update("total_spots", totalSpots)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error updating document", e);
+                            }
+                        });
             }
         }
     }
@@ -476,30 +509,152 @@ public class MapFragment extends Fragment {
 
     public void resetPiOne() {
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         for (Street s : tm.getStreets()) {
 
             if (s.getPiID().equals("pi-1")) {
                 s.setPiID("null");
+
+                 /*
+                 Database write:
+                 */
+
+                String streetID = null;
+
+                Task<QuerySnapshot> task = db.collection("streets")
+                        .whereEqualTo("pi", "pi-1").get();
+
+                try {
+                    QuerySnapshot documents = Tasks.await(task);
+
+                    for (QueryDocumentSnapshot document : documents){
+
+                        streetID = document.getId();
+                        break; //only one is connected at a time
+                    }
+                } catch (ExecutionException | InterruptedException e) {
+                    Log.d(TAG, "get failed with ", e);
+                }
+
+                DocumentReference piDoc = db.collection("streets").document(streetID);
+
+                piDoc
+                        .update("pi", "null")
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error updating document", e);
+                            }
+                        });
+
             }
         }
     }
 
     public void resetPiTwo() {
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         for (Street s : tm.getStreets()) {
 
             if (s.getPiID().equals("pi-2")) {
                 s.setPiID("null");
+
+                 /*
+                 Database write:
+                 */
+
+                String streetID = null;
+
+                Task<QuerySnapshot> task = db.collection("streets")
+                        .whereEqualTo("pi", "pi-2").get();
+
+                try {
+                    QuerySnapshot documents = Tasks.await(task);
+
+                    for (QueryDocumentSnapshot document : documents){
+
+                        streetID = document.getId();
+                        break; //only one is connected at a time
+                    }
+                } catch (ExecutionException | InterruptedException e) {
+                    Log.d(TAG, "get failed with ", e);
+                }
+
+                DocumentReference piDoc = db.collection("streets").document(streetID);
+
+                piDoc
+                        .update("pi", "null")
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error updating document", e);
+                            }
+                        });
             }
         }
     }
 
     public void setPi(String piID, String streetName) {
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
         for (Street s : tm.getStreets()) {
 
             if (s.getStreetName().equals(streetName)) {
                 s.setPiID(piID);
+
+
+                /*
+                 Database write:
+                 */
+
+                String streetID = null;
+
+                Task<QuerySnapshot> task = db.collection("streets")
+                        .whereEqualTo("street_name", streetName).get();
+
+                try {
+                    QuerySnapshot documents = Tasks.await(task);
+
+                    for (QueryDocumentSnapshot document : documents){
+
+                        streetID = document.getId();
+                        break; //only one is connected at a time
+                    }
+                } catch (ExecutionException | InterruptedException e) {
+                    Log.d(TAG, "get failed with ", e);
+                }
+
+                DocumentReference piDoc = db.collection("streets").document(streetID);
+
+                piDoc
+                        .update("pi", piID)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "DocumentSnapshot successfully updated!");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w(TAG, "Error updating document", e);
+                            }
+                        });
             }
         }
     }
