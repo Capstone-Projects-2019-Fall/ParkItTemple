@@ -5,7 +5,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,9 +23,18 @@ import androidx.fragment.app.Fragment;
 
 import com.example.parkittemple.database.ParkingLot;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 /**
@@ -39,10 +51,11 @@ public class LotDetails extends Fragment {
     private static final String PI = "pi";
 
     private String lotName, lotDays, lotHours, lotCost, PiID;
-    private int total_spots, available_spots;
+    private TextView available_spots;
     private ArrayList<LatLng> points;
     private double lat, lng;
     private RelativeLayout back_dim_layout;
+    private boolean isVisible;
 
 
     public LotDetails() {
@@ -113,6 +126,51 @@ public class LotDetails extends Fragment {
 
         // Inflate the layout for this fragment
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Handler handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                available_spots.setText(String.valueOf(msg.what));
+                return false;
+            }
+        });
+
+        View view = getView();
+        if (view != null) {
+            available_spots = view.findViewById(R.id.num_spots);
+            available_spots.setText("--");
+            isVisible = true;
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            final DocumentReference docRef = db.collection("pi").document("pi-2");
+            docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
+
+                    if (snapshot != null && snapshot.exists()) {
+                        handler.sendEmptyMessage(Math.toIntExact((long) snapshot.get("available_spots")));
+                        Log.d(TAG, "Current data: " + snapshot.getData());
+                    } else {
+                        Log.d(TAG, "Current data: null");
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible = false;
     }
 
     @Override

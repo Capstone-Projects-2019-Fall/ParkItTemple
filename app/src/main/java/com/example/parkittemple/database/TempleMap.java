@@ -246,15 +246,7 @@ public class TempleMap {
         }
     }
 
-    public void resetPiOne() {
 
-        for (Street s : streets) {
-
-            if (s.getPiID().equals("pi-1")) {
-                s.setPiID("null");
-            }
-        }
-    }
 
     public void resetPiTwo() {
 

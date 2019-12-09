@@ -36,6 +36,7 @@ import com.example.parkittemple.database.Street;
 import com.example.parkittemple.database.TempleMap;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -225,68 +226,23 @@ public class RealTimeStreetDetailsFragment extends Fragment {
             isVisible = true;
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-            Thread t = new Thread() {
+            final DocumentReference docRef = db.collection("pi").document("pi-1");
+            docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
-                public void run() {
-                    while (isVisible) {
-                        try {
-                            sleep(3000);
+                public void onEvent(@Nullable DocumentSnapshot snapshot, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
 
-                            db.collection("pi")
-                                    //.whereArrayContains("pi", "pi")
-                                    //.whereEqualTo("state", "CA")
-                                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onEvent(@Nullable QuerySnapshot snapshots,
-                                                            @Nullable FirebaseFirestoreException e) {
-                                            if (e != null) {
-                                                Log.w(TAG, "listen:error", e);
-                                                return;
-                                            }
-
-                                            for (QueryDocumentSnapshot doc : snapshots) {
-
-                                                if (doc.get("available_spots") != null) {
-                                                    String piID = doc.getId();
-                                                    long takenSpots;
-                                                    try{
-                                                        takenSpots = (long) doc.get("available_spots");
-                                                    } catch (ClassCastException class_e){
-                                                        takenSpots = 0;
-                                                    }
-
-                                                    Log.d(TAG, "PiID: " + piID);
-                                                    Log.d(TAG, "Taken Spots: " + takenSpots);
-
-                                                    handler.sendEmptyMessage(Math.toIntExact(takenSpots));
-                                                }
-                                            }
-                                        }
-                                    });
-
-
-                            /*Task<QuerySnapshot> task = db.collection("pi").get();
-
-                            try {
-                                QuerySnapshot documents = Tasks.await(task);
-
-                               Map<String, Object> map = documents.getDocuments().get(0).getData();
-                               long spots = (long) map.get("available_spots");
-                               Log.d(TAG, "run: spots :" + spots);
-                               handler.sendEmptyMessage(Math.toIntExact(spots));
-                            } catch (ExecutionException | InterruptedException e) {
-                                Log.d(TAG, "get failed with ", e);
-                            }
-
-                             */
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                    if (snapshot != null && snapshot.exists()) {
+                        handler.sendEmptyMessage(Math.toIntExact((long) snapshot.get("available_spots")));
+                        Log.d(TAG, "Current data: " + snapshot.getData());
+                    } else {
+                        Log.d(TAG, "Current data: null");
                     }
                 }
-            };
-            t.start();
+            });
         }
     }
 
